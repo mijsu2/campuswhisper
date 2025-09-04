@@ -31,95 +31,111 @@ export default function TrackIssues() {
   });
 
   return (
-    <div className="page-container" data-testid="track-issues-page">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Track Submissions</h1>
-        <p className="text-muted-foreground">Monitor the status of reported issues and suggestions</p>
-      </div>
-
-      {/* Search and Filters */}
-      <Card className="mb-8">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search by reference ID, subject, or keywords..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-                data-testid="input-search"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-48" data-testid="select-status-filter">
-                <SelectValue placeholder="All Statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                {STATUS_OPTIONS.map((status) => (
-                  <SelectItem key={status.id} value={status.id}>
-                    {status.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full md:w-48" data-testid="select-category-filter">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {CATEGORIES.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Issues List */}
-      <div className="space-y-4">
-        {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-card p-6 rounded-lg border border-border animate-pulse">
-                <div className="h-6 bg-muted rounded w-1/2 mb-4"></div>
-                <div className="h-4 bg-muted rounded w-1/4 mb-2"></div>
-                <div className="h-4 bg-muted rounded w-1/3"></div>
-              </div>
-            ))}
-          </div>
-        ) : filteredComplaints.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">No submissions found</h3>
-              <p className="text-muted-foreground">
-                {searchTerm || statusFilter || categoryFilter 
-                  ? "Try adjusting your search criteria or filters"
-                  : "No submissions have been made yet"}
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          filteredComplaints.map((complaint) => (
-            <IssueCard key={complaint.id} complaint={complaint} />
-          ))
-        )}
-      </div>
-
-      {/* Results Summary */}
-      {filteredComplaints.length > 0 && (
-        <div className="mt-8">
-          <p className="text-sm text-muted-foreground text-center">
-            Showing {filteredComplaints.length} of {complaints.length} results
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900" data-testid="track-issues-page">
+      <div className="page-container py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-indigo-800 dark:from-white dark:via-blue-200 dark:to-indigo-300 bg-clip-text text-transparent mb-3">
+            Track Submissions
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Monitor the status of your reported issues and suggestions with real-time updates
           </p>
         </div>
-      )}
+
+        {/* Search and Filters */}
+        <Card className="mb-8 shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <CardContent className="p-8">
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Input
+                  placeholder="Search by reference ID, subject, or keywords..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 h-12 text-base border-2 border-muted focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                  data-testid="input-search"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-3">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-52 h-12 border-2 border-muted focus:border-blue-500" data-testid="select-status-filter">
+                    <SelectValue placeholder="All Statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    {STATUS_OPTIONS.map((status) => (
+                      <SelectItem key={status.id} value={status.id}>
+                        {status.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-full sm:w-52 h-12 border-2 border-muted focus:border-blue-500" data-testid="select-category-filter">
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {CATEGORIES.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Issues List with Scrollbar */}
+        <div className="max-h-[70vh] overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+          {isLoading ? (
+            <div className="space-y-6">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="bg-white/60 dark:bg-slate-800/60 p-8 rounded-xl border-0 shadow-lg animate-pulse backdrop-blur-sm">
+                  <div className="h-6 bg-muted rounded-lg w-1/2 mb-4"></div>
+                  <div className="h-4 bg-muted rounded-lg w-1/4 mb-2"></div>
+                  <div className="h-4 bg-muted rounded-lg w-1/3"></div>
+                </div>
+              ))}
+            </div>
+          ) : filteredComplaints.length === 0 ? (
+            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+              <CardContent className="p-12 text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-blue-900 dark:to-indigo-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">No submissions found</h3>
+                <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                  {searchTerm || statusFilter || categoryFilter 
+                    ? "Try adjusting your search criteria or filters to find what you're looking for"
+                    : "No submissions have been made yet. Your reports will appear here once submitted."}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            filteredComplaints.map((complaint) => (
+              <IssueCard 
+                key={complaint.id} 
+                complaint={complaint} 
+                hideCollapsible={true}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Results Summary */}
+        {filteredComplaints.length > 0 && (
+          <div className="mt-8 text-center">
+            <div className="inline-flex items-center px-6 py-3 bg-white/60 dark:bg-slate-800/60 rounded-full backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+              <p className="text-sm font-medium text-muted-foreground">
+                Showing <span className="text-blue-600 dark:text-blue-400 font-semibold">{filteredComplaints.length}</span> of <span className="text-blue-600 dark:text-blue-400 font-semibold">{complaints.length}</span> results
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
