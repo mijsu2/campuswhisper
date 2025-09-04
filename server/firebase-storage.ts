@@ -14,12 +14,14 @@ import {
   orderBy, 
   limit 
 } from 'firebase/firestore';
+import bcrypt from 'bcryptjs';
 
 export class FirebaseStorage implements IStorage {
   private complaintCounter: number = 1;
 
   constructor() {
     this.initializeCounter();
+    this.initializeDefaultAdmin();
   }
 
   private async initializeCounter() {
@@ -66,13 +68,54 @@ export class FirebaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
       const id = randomUUID();
-      const user: User = { ...insertUser, id };
+      const hashedPassword = await bcrypt.hash(insertUser.password, 12);
+      const user: User = { ...insertUser, id, password: hashedPassword };
       const docRef = doc(db, 'users', id);
       await setDoc(docRef, user);
       return user;
     } catch (error) {
       console.error('Error creating user:', error);
       throw error;
+    }
+  }
+
+  async verifyPassword(username: string, password: string): Promise<User | null> {
+    try {
+      const user = await this.getUserByUsername(username);
+      if (!user) return null;
+      
+      const isValid = await bcrypt.compare(password, user.password);
+      return isValid ? user : null;
+    } catch (error) {
+      console.error('Error verifying password:', error);
+      return null;
+    }
+  }
+
+  async updateUserPassword(id: string, newPassword: string): Promise<boolean> {
+    try {
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      const docRef = doc(db, 'users', id);
+      await updateDoc(docRef, { password: hashedPassword });
+      return true;
+    } catch (error) {
+      console.error('Error updating password:', error);
+      return false;
+    }
+  }
+
+  async initializeDefaultAdmin(): Promise<void> {
+    try {
+      const existingAdmin = await this.getUserByUsername('admin');
+      if (!existingAdmin) {
+        await this.createUser({
+          username: 'admin',
+          password: 'admin123'
+        });
+        console.log('Default admin account created: admin/admin123');
+      }
+    } catch (error) {
+      console.error('Error initializing default admin:', error);
     }
   }
 

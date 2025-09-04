@@ -3,9 +3,13 @@ import { randomUUID } from "crypto";
 import { FirebaseStorage } from './firebase-storage';
 
 export interface IStorage {
+  // User management
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  verifyPassword(username: string, password: string): Promise<User | null>;
+  updateUserPassword(id: string, newPassword: string): Promise<boolean>;
+  initializeDefaultAdmin(): Promise<void>;
   
   // Complaints
   createComplaint(complaint: InsertComplaint): Promise<Complaint>;
@@ -57,6 +61,30 @@ export class MemStorage implements IStorage {
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
+  }
+
+  async verifyPassword(username: string, password: string): Promise<User | null> {
+    const user = await this.getUserByUsername(username);
+    if (!user) return null;
+    return user.password === password ? user : null;
+  }
+
+  async updateUserPassword(id: string, newPassword: string): Promise<boolean> {
+    const user = this.users.get(id);
+    if (!user) return false;
+    const updatedUser = { ...user, password: newPassword };
+    this.users.set(id, updatedUser);
+    return true;
+  }
+
+  async initializeDefaultAdmin(): Promise<void> {
+    const existingAdmin = await this.getUserByUsername('admin');
+    if (!existingAdmin) {
+      await this.createUser({
+        username: 'admin',
+        password: 'admin123'
+      });
+    }
   }
 
   async createComplaint(insertComplaint: InsertComplaint): Promise<Complaint> {

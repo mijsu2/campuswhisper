@@ -18,8 +18,10 @@ import {
   Download,
   Eye,
   CheckCircle2,
-  LogOut
+  LogOut,
+  Settings
 } from "lucide-react";
+import PasswordChangeModal from "@/components/password-change-modal";
 import { format } from "date-fns";
 import { Complaint } from "@shared/schema";
 import { CATEGORIES, STATUS_OPTIONS } from "@/lib/constants";
@@ -173,14 +175,25 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
           <p className="text-muted-foreground">Manage and monitor all submissions</p>
         </div>
-        <Button 
-          variant="outline" 
-          onClick={handleLogout}
-          data-testid="button-logout"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
-        </Button>
+        <div className="flex space-x-3">
+          <PasswordChangeModal>
+            <Button 
+              variant="outline" 
+              data-testid="button-change-password"
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Change Password
+            </Button>
+          </PasswordChangeModal>
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+            data-testid="button-logout"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+        </div>
       </div>
 
       {/* Admin Stats */}
