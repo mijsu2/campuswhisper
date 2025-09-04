@@ -10,6 +10,7 @@ import CategoryChart from "@/components/charts/category-chart";
 import TrendsChart from "@/components/charts/trends-chart";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import AdminTopbar from "@/components/layout/admin-topbar";
 import { 
   Clock, 
   Search, 
@@ -17,11 +18,8 @@ import {
   TrendingUp, 
   Download,
   Eye,
-  CheckCircle2,
-  LogOut,
-  Settings
+  CheckCircle2
 } from "lucide-react";
-import PasswordChangeModal from "@/components/password-change-modal";
 import { format } from "date-fns";
 import { Complaint } from "@shared/schema";
 import { CATEGORIES, STATUS_OPTIONS } from "@/lib/constants";
@@ -37,15 +35,6 @@ interface StatsData {
 export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
-    });
-  };
 
   const { data: stats, isLoading: statsLoading } = useQuery<StatsData>({
     queryKey: ["/api/stats"],
@@ -169,36 +158,19 @@ export default function AdminDashboard() {
     : "0";
 
   return (
-    <div className="page-container" data-testid="admin-dashboard-page">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage and monitor all submissions</p>
+    <div className="min-h-screen bg-background" data-testid="admin-dashboard">
+      <AdminTopbar />
+      
+      <div className="p-6">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard Overview</h1>
+          <p className="text-muted-foreground">Monitor and manage all submissions across the platform</p>
         </div>
-        <div className="flex space-x-3">
-          <PasswordChangeModal>
-            <Button 
-              variant="outline" 
-              data-testid="button-change-password"
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Change Password
-            </Button>
-          </PasswordChangeModal>
-          <Button 
-            variant="outline" 
-            onClick={handleLogout}
-            data-testid="button-logout"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
-        </div>
-      </div>
 
-      {/* Admin Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatsCard
+        {/* Admin Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatsCard
           title="Pending Review"
           value={pendingCount}
           subtitle={`+${Math.floor(Math.random() * 5)} from yesterday`}
@@ -230,11 +202,11 @@ export default function AdminDashboard() {
           iconColor="text-green-600"
           iconBg="bg-green-100 dark:bg-green-900/30"
         />
-      </div>
+        </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <Card>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <Card>
           <CardHeader>
             <CardTitle>Complaints by Category</CardTitle>
           </CardHeader>
@@ -261,11 +233,11 @@ export default function AdminDashboard() {
             />
           </CardContent>
         </Card>
-      </div>
+        </div>
 
-      {/* Recent Submissions Table */}
-      <Card>
-        <CardHeader>
+        {/* Recent Submissions Table */}
+        <Card>
+          <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Recent Submissions</CardTitle>
             <div className="flex space-x-2">
@@ -396,7 +368,8 @@ export default function AdminDashboard() {
             </div>
           )}
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
