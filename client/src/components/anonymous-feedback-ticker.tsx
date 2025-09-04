@@ -37,7 +37,7 @@ export default function AnonymousFeedbackTicker() {
           id: item.id,
           type,
           category: type === 'complaint' ? (item.category || 'General') : (item.type || 'General'),
-          preview: item.description?.substring(0, 50) + (item.description?.length > 50 ? '...' : '') || `Anonymous ${type} submitted`,
+          preview: `New anonymous ${type} submitted`,
           timeAgo: getTimeAgo(item.createdAt),
           referenceId: item.referenceId || 'N/A',
           createdAt: item.createdAt
