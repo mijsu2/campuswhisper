@@ -85,7 +85,7 @@ export default function ComplaintForm() {
     if (showSuccessModal) {
       const timer = setTimeout(() => {
         setShowSuccessModal(false);
-        setLocation('/dashboard');
+        setLocation('/');
       }, 4000);
 
       return () => clearTimeout(timer);
@@ -237,7 +237,7 @@ export default function ComplaintForm() {
               <Button 
                 onClick={() => {
                   setShowSuccessModal(false);
-                  setLocation('/dashboard');
+                  setLocation('/');
                 }}
                 className="mt-3"
                 variant="outline"
