@@ -94,12 +94,12 @@ export default function AnonymousFeedbackTicker() {
 
   // Cycling animation effect
   useEffect(() => {
-    if (feedbackItems.length <= 3) return;
+    if (feedbackItems.length <= 4) return;
 
     const interval = setInterval(() => {
       setIsVisible(false);
       setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 3) % feedbackItems.length);
+        setCurrentIndex((prev) => (prev + 4) % feedbackItems.length);
         setAnimationKey(prev => prev + 1);
         setIsVisible(true);
       }, 300);
@@ -160,11 +160,11 @@ export default function AnonymousFeedbackTicker() {
 
   const currentItem = feedbackItems[currentIndex];
 
-  // Get 3 items to display with cycling
-  const displayItems = feedbackItems.length <= 3 
+  // Get 4 items to display with cycling
+  const displayItems = feedbackItems.length <= 4 
     ? feedbackItems 
-    : feedbackItems.slice(currentIndex, currentIndex + 3).concat(
-        feedbackItems.slice(0, Math.max(0, (currentIndex + 3) - feedbackItems.length))
+    : feedbackItems.slice(currentIndex, currentIndex + 4).concat(
+        feedbackItems.slice(0, Math.max(0, (currentIndex + 4) - feedbackItems.length))
       );
 
   return (
