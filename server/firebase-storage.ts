@@ -2,6 +2,18 @@ import { db } from './firebase-config';
 import { type User, type InsertUser, type Complaint, type InsertComplaint, type Suggestion, type InsertSuggestion } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { IStorage } from './storage';
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  getDocs, 
+  setDoc, 
+  updateDoc, 
+  query, 
+  where, 
+  orderBy, 
+  limit 
+} from 'firebase/firestore';
 
 export class FirebaseStorage implements IStorage {
   private complaintCounter: number = 1;
@@ -13,7 +25,9 @@ export class FirebaseStorage implements IStorage {
   private async initializeCounter() {
     // Get the highest reference ID to continue counter
     try {
-      const snapshot = await db.collection('complaints').orderBy('referenceId', 'desc').limit(1).get();
+      const complaintsRef = collection(db, 'complaints');
+      const q = query(complaintsRef, orderBy('referenceId', 'desc'), limit(1));
+      const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const lastRef = snapshot.docs[0].data().referenceId;
         const match = lastRef.match(/REF-\d{4}-(\d{4})/);
@@ -28,8 +42,9 @@ export class FirebaseStorage implements IStorage {
 
   async getUser(id: string): Promise<User | undefined> {
     try {
-      const doc = await db.collection('users').doc(id).get();
-      return doc.exists ? { id: doc.id, ...doc.data() } as User : undefined;
+      const docRef = doc(db, 'users', id);
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as User : undefined;
     } catch (error) {
       console.error('Error getting user:', error);
       return undefined;
@@ -38,7 +53,9 @@ export class FirebaseStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     try {
-      const snapshot = await db.collection('users').where('username', '==', username).limit(1).get();
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('username', '==', username), limit(1));
+      const snapshot = await getDocs(q);
       return snapshot.empty ? undefined : { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as User;
     } catch (error) {
       console.error('Error getting user by username:', error);
@@ -50,7 +67,8 @@ export class FirebaseStorage implements IStorage {
     try {
       const id = randomUUID();
       const user: User = { ...insertUser, id };
-      await db.collection('users').doc(id).set(user);
+      const docRef = doc(db, 'users', id);
+      await setDoc(docRef, user);
       return user;
     } catch (error) {
       console.error('Error creating user:', error);
@@ -78,7 +96,8 @@ export class FirebaseStorage implements IStorage {
         contactEmail: insertComplaint.contactEmail || null,
       };
       
-      await db.collection('complaints').doc(id).set(complaint);
+      const docRef = doc(db, 'complaints', id);
+      await setDoc(docRef, complaint);
       return complaint;
     } catch (error) {
       console.error('Error creating complaint:', error);
@@ -88,7 +107,9 @@ export class FirebaseStorage implements IStorage {
 
   async getComplaints(): Promise<Complaint[]> {
     try {
-      const snapshot = await db.collection('complaints').orderBy('createdAt', 'desc').get();
+      const complaintsRef = collection(db, 'complaints');
+      const q = query(complaintsRef, orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Complaint));
     } catch (error) {
       console.error('Error getting complaints:', error);
@@ -98,7 +119,9 @@ export class FirebaseStorage implements IStorage {
 
   async getComplaintByReference(referenceId: string): Promise<Complaint | undefined> {
     try {
-      const snapshot = await db.collection('complaints').where('referenceId', '==', referenceId).limit(1).get();
+      const complaintsRef = collection(db, 'complaints');
+      const q = query(complaintsRef, where('referenceId', '==', referenceId), limit(1));
+      const snapshot = await getDocs(q);
       return snapshot.empty ? undefined : { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as Complaint;
     } catch (error) {
       console.error('Error getting complaint by reference:', error);
@@ -108,10 +131,10 @@ export class FirebaseStorage implements IStorage {
 
   async updateComplaintStatus(id: string, status: string, resolution?: string): Promise<Complaint | undefined> {
     try {
-      const docRef = db.collection('complaints').doc(id);
-      const doc = await docRef.get();
+      const docRef = doc(db, 'complaints', id);
+      const docSnap = await getDoc(docRef);
       
-      if (!doc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
 
       const updateData: any = {
         status,
@@ -126,9 +149,9 @@ export class FirebaseStorage implements IStorage {
         updateData.resolvedAt = new Date();
       }
 
-      await docRef.update(updateData);
+      await updateDoc(docRef, updateData);
       
-      const updatedDoc = await docRef.get();
+      const updatedDoc = await getDoc(docRef);
       return { id: updatedDoc.id, ...updatedDoc.data() } as Complaint;
     } catch (error) {
       console.error('Error updating complaint status:', error);
@@ -138,7 +161,9 @@ export class FirebaseStorage implements IStorage {
 
   async getComplaintsByStatus(status: string): Promise<Complaint[]> {
     try {
-      const snapshot = await db.collection('complaints').where('status', '==', status).get();
+      const complaintsRef = collection(db, 'complaints');
+      const q = query(complaintsRef, where('status', '==', status));
+      const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Complaint));
     } catch (error) {
       console.error('Error getting complaints by status:', error);
@@ -148,7 +173,9 @@ export class FirebaseStorage implements IStorage {
 
   async getComplaintsByCategory(category: string): Promise<Complaint[]> {
     try {
-      const snapshot = await db.collection('complaints').where('category', '==', category).get();
+      const complaintsRef = collection(db, 'complaints');
+      const q = query(complaintsRef, where('category', '==', category));
+      const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Complaint));
     } catch (error) {
       console.error('Error getting complaints by category:', error);
@@ -170,7 +197,8 @@ export class FirebaseStorage implements IStorage {
         benefits: insertSuggestion.benefits || null,
       };
       
-      await db.collection('suggestions').doc(id).set(suggestion);
+      const docRef = doc(db, 'suggestions', id);
+      await setDoc(docRef, suggestion);
       return suggestion;
     } catch (error) {
       console.error('Error creating suggestion:', error);
@@ -180,7 +208,9 @@ export class FirebaseStorage implements IStorage {
 
   async getSuggestions(): Promise<Suggestion[]> {
     try {
-      const snapshot = await db.collection('suggestions').orderBy('createdAt', 'desc').get();
+      const suggestionsRef = collection(db, 'suggestions');
+      const q = query(suggestionsRef, orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Suggestion));
     } catch (error) {
       console.error('Error getting suggestions:', error);
@@ -190,17 +220,17 @@ export class FirebaseStorage implements IStorage {
 
   async updateSuggestionStatus(id: string, status: string): Promise<Suggestion | undefined> {
     try {
-      const docRef = db.collection('suggestions').doc(id);
-      const doc = await docRef.get();
+      const docRef = doc(db, 'suggestions', id);
+      const docSnap = await getDoc(docRef);
       
-      if (!doc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
 
-      await docRef.update({
+      await updateDoc(docRef, {
         status,
         updatedAt: new Date(),
       });
       
-      const updatedDoc = await docRef.get();
+      const updatedDoc = await getDoc(docRef);
       return { id: updatedDoc.id, ...updatedDoc.data() } as Suggestion;
     } catch (error) {
       console.error('Error updating suggestion status:', error);
@@ -216,7 +246,8 @@ export class FirebaseStorage implements IStorage {
     byCategory: Record<string, number>;
   }> {
     try {
-      const snapshot = await db.collection('complaints').get();
+      const complaintsRef = collection(db, 'complaints');
+      const snapshot = await getDocs(complaintsRef);
       const complaints = snapshot.docs.map(doc => doc.data());
       
       const stats = {

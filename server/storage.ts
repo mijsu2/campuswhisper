@@ -1,5 +1,6 @@
 import { type User, type InsertUser, type Complaint, type InsertComplaint, type Suggestion, type InsertSuggestion } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { FirebaseStorage } from './firebase-storage';
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -183,24 +184,17 @@ export class MemStorage implements IStorage {
   }
 }
 
-// Conditionally use Firebase or in-memory storage
+// Initialize Firestore storage
 let storage: IStorage;
 
-// For now, use in-memory storage until Firestore credentials are provided
-storage = new MemStorage();
-console.log('Using in-memory storage (Firestore credentials not configured yet)');
-
-// Function to initialize Firestore when credentials are available
-export async function initializeFirestore(): Promise<void> {
-  try {
-    if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
-      const { FirebaseStorage } = await import('./firebase-storage');
-      storage = new FirebaseStorage();
-      console.log('Switched to Firestore database for campuswhispers-9edfe');
-    }
-  } catch (error) {
-    console.error('Error initializing Firestore:', error);
-  }
+try {
+  // Use Firestore with client-side Firebase SDK
+  storage = new FirebaseStorage();
+  console.log('Using Firestore database for campuswhispers-9edfe');
+} catch (error) {
+  console.error('Error initializing Firestore, falling back to in-memory:', error);
+  storage = new MemStorage();
+  console.log('Using in-memory storage (Firestore initialization failed)');
 }
 
 export { storage };
