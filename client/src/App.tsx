@@ -1,17 +1,21 @@
 import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { queryClient } from "@/lib/queryClient";
 import { AuthProvider } from "@/contexts/auth-context";
+import { Toaster } from "@/components/ui/toaster";
 import Dashboard from "@/pages/dashboard";
 import SubmitComplaint from "@/pages/submit-complaint";
-import Suggestions from "@/pages/suggestions";
 import TrackIssues from "@/pages/track-issues";
 import ResolvedCases from "@/pages/resolved-cases";
 import FAQ from "@/pages/faq";
-import AdminDashboard from "@/pages/admin-dashboard";
+import Suggestions from "@/pages/suggestions";
 import AdminLogin from "@/pages/admin-login";
+import AdminDashboard from "@/pages/admin-dashboard";
+import AdminComplaints from "@/pages/admin-complaints";
+import AdminSuggestions from "@/pages/admin-suggestions";
+import AdminAnalytics from "@/pages/admin-analytics";
+import AdminUsers from "@/pages/admin-users";
 import NotFound from "@/pages/not-found";
 import Topbar from "@/components/layout/topbar";
 import SecurityBanner from "@/components/layout/security-banner";
@@ -39,6 +43,10 @@ function Router() {
                   <AdminDashboard />
                 </ProtectedRoute>
               </Route>
+              <Route path="/admin/complaints" component={AdminComplaints} />
+              <Route path="/admin/suggestions" component={AdminSuggestions} />
+              <Route path="/admin/analytics" component={AdminAnalytics} />
+              <Route path="/admin/users" component={AdminUsers} />
               <Route component={NotFound} />
             </Switch>
           </main>
