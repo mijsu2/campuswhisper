@@ -94,7 +94,7 @@ export default function Dashboard() {
               <CardTitle>Submission Categories</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-2 gap-4">
                 {CATEGORIES.map((category) => (
                   <div
                     key={category.id}
