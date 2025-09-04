@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Home, 
   MessageSquare, 
@@ -11,7 +16,7 @@ import {
   HelpCircle, 
   GraduationCap,
   Menu,
-  X
+  ChevronDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +31,6 @@ const navigation = [
 
 export default function Topbar() {
   const [location] = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm" data-testid="topbar">
@@ -74,75 +78,56 @@ export default function Topbar() {
             })}
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Dropdown */}
           <div className="md:hidden">
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="p-2"
+                  className="flex items-center space-x-1 px-3 py-2"
                   data-testid="mobile-menu-trigger"
                 >
-                  <Menu className="h-5 w-5" />
+                  <Menu className="h-4 w-4" />
+                  <ChevronDown className="h-3 w-3" />
                   <span className="sr-only">Open menu</span>
                 </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] sm:w-[300px]">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                      <GraduationCap className="text-white h-4 w-4" />
-                    </div>
-                    <div>
-                      <h2 className="font-semibold text-gray-900 dark:text-white">Campus Voice</h2>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Anonymous Feedback</p>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="p-1"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <nav className="space-y-2">
-                  {navigation.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = location === item.href;
-                    
-                    return (
-                      <Link key={item.name} href={item.href}>
-                        <div
-                          className={cn(
-                            "flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer",
-                            isActive 
-                              ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300" 
-                              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
-                          )}
-                          onClick={() => setMobileMenuOpen(false)}
-                          data-testid={`mobile-nav-${item.name.toLowerCase().replace(/\\s+/g, '-')}`}
-                        >
-                          <Icon className="h-5 w-5" />
-                          <span>{item.name}</span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </nav>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-56 mt-2"
+                sideOffset={4}
+              >
+                {navigation.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location === item.href;
+                  
+                  return (
+                    <Link key={item.name} href={item.href}>
+                      <DropdownMenuItem
+                        className={cn(
+                          "flex items-center space-x-3 px-3 py-2.5 cursor-pointer",
+                          isActive 
+                            ? "bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300" 
+                            : "text-gray-600 dark:text-gray-300"
+                        )}
+                        data-testid={`mobile-nav-${item.name.toLowerCase().replace(/\\s+/g, '-')}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span className="font-medium">{item.name}</span>
+                      </DropdownMenuItem>
+                    </Link>
+                  );
+                })}
                 
-                {/* Mobile Footer */}
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                      🔒 Secure & Anonymous Platform
-                    </p>
-                  </div>
+                {/* Dropdown Footer */}
+                <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                    🔒 Secure & Anonymous
+                  </p>
                 </div>
-              </SheetContent>
-            </Sheet>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
