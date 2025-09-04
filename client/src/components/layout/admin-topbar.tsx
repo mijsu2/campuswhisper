@@ -72,15 +72,19 @@ export default function AdminTopbar() {
                 <Link key={item.name} href={item.href}>
                   <div
                     className={cn(
-                      "flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer",
+                      "flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer relative group",
                       isActive 
-                        ? "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 shadow-sm" 
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                        ? "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 shadow-sm border border-red-200 dark:border-red-800" 
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white hover:shadow-sm"
                     )}
                     data-testid={`admin-nav-${item.name.toLowerCase().replace(/\\s+/g, '-')}`}
                   >
                     <Icon className="h-4 w-4" />
                     <span className="hidden lg:block">{item.name}</span>
+                    {/* Active indicator */}
+                    {isActive && (
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-red-600 rounded-full"></div>
+                    )}
                   </div>
                 </Link>
               );
@@ -88,27 +92,44 @@ export default function AdminTopbar() {
           </nav>
 
           {/* Admin Actions */}
-          <div className="hidden md:flex items-center space-x-3">
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              Welcome, <span className="font-medium">{user?.username}</span>
+          <div className="hidden md:flex items-center space-x-4">
+            <div className="flex items-center space-x-3 px-3 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="h-8 w-8 bg-gradient-to-br from-red-600 to-orange-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">
+                  {user?.username?.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="text-sm">
+                <div className="text-gray-900 dark:text-white font-medium">
+                  Welcome, {user?.username}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Administrator</div>
+              </div>
             </div>
-            <PasswordChangeModal>
+            
+            <div className="flex items-center space-x-1">
+              <PasswordChangeModal>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-9 w-9 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  data-testid="admin-change-password"
+                  title="Change Password"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </PasswordChangeModal>
               <Button 
                 variant="ghost" 
                 size="sm"
-                data-testid="admin-change-password"
+                className="h-9 w-9 p-0 hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                onClick={handleLogout}
+                data-testid="admin-logout"
+                title="Logout"
               >
-                <Settings className="h-4 w-4" />
+                <LogOut className="h-4 w-4" />
               </Button>
-            </PasswordChangeModal>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleLogout}
-              data-testid="admin-logout"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -147,15 +168,24 @@ export default function AdminTopbar() {
                 </div>
 
                 {/* User Info */}
-                <div className="mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {user?.username}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg border border-red-100 dark:border-red-800">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 bg-gradient-to-br from-red-600 to-orange-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">
+                        {user?.username?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {user?.username}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Navigation */}
-                <nav className="space-y-2 mb-6">
+                <nav className="space-y-1 mb-6">
                   {adminNavigation.map((item) => {
                     const Icon = item.icon;
                     const isActive = location === item.href;
@@ -164,16 +194,19 @@ export default function AdminTopbar() {
                       <Link key={item.name} href={item.href}>
                         <div
                           className={cn(
-                            "flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer",
+                            "flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer relative",
                             isActive 
-                              ? "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300" 
+                              ? "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800" 
                               : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                           )}
                           onClick={() => setMobileMenuOpen(false)}
                           data-testid={`admin-mobile-nav-${item.name.toLowerCase().replace(/\\s+/g, '-')}`}
                         >
-                          <Icon className="h-5 w-5" />
-                          <span>{item.name}</span>
+                          <Icon className="h-5 w-5 flex-shrink-0" />
+                          <span className="flex-1">{item.name}</span>
+                          {isActive && (
+                            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                          )}
                         </div>
                       </Link>
                     );
