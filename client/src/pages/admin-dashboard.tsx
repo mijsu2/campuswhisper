@@ -97,14 +97,34 @@ export default function AdminDashboard() {
       
       const monthSubmissions = complaints.filter(c => {
         if (!c.createdAt) return false;
-        const createdDate = new Date(c.createdAt);
-        return !isNaN(createdDate.getTime()) && createdDate >= monthStart && createdDate <= monthEnd;
+        let createdDate;
+        try {
+          if (c.createdAt && typeof c.createdAt === 'object' && 'seconds' in c.createdAt) {
+            const timestamp = c.createdAt as any;
+            createdDate = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+          } else {
+            createdDate = new Date(c.createdAt);
+          }
+          return !isNaN(createdDate.getTime()) && createdDate >= monthStart && createdDate <= monthEnd;
+        } catch {
+          return false;
+        }
       }).length;
       
       const monthResolved = complaints.filter(c => {
         if (!c.resolvedAt) return false;
-        const resolvedDate = new Date(c.resolvedAt);
-        return !isNaN(resolvedDate.getTime()) && resolvedDate >= monthStart && resolvedDate <= monthEnd;
+        let resolvedDate;
+        try {
+          if (c.resolvedAt && typeof c.resolvedAt === 'object' && 'seconds' in c.resolvedAt) {
+            const timestamp = c.resolvedAt as any;
+            resolvedDate = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+          } else {
+            resolvedDate = new Date(c.resolvedAt);
+          }
+          return !isNaN(resolvedDate.getTime()) && resolvedDate >= monthStart && resolvedDate <= monthEnd;
+        } catch {
+          return false;
+        }
       }).length;
       
       monthlySubmissions.push(monthSubmissions);
@@ -124,10 +144,25 @@ export default function AdminDashboard() {
   const avgResolutionTime = resolvedComplaints.length > 0 
     ? (resolvedComplaints.reduce((acc: number, complaint) => {
         if (!complaint.createdAt || !complaint.resolvedAt) return acc;
-        const created = new Date(complaint.createdAt);
-        const resolved = new Date(complaint.resolvedAt);
-        if (isNaN(created.getTime()) || isNaN(resolved.getTime())) return acc;
-        return acc + (resolved.getTime() - created.getTime());
+        try {
+          let created, resolved;
+          if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'seconds' in complaint.createdAt) {
+            const timestamp = complaint.createdAt as any;
+            created = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+          } else {
+            created = new Date(complaint.createdAt);
+          }
+          if (complaint.resolvedAt && typeof complaint.resolvedAt === 'object' && 'seconds' in complaint.resolvedAt) {
+            const timestamp = complaint.resolvedAt as any;
+            resolved = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+          } else {
+            resolved = new Date(complaint.resolvedAt);
+          }
+          if (isNaN(created.getTime()) || isNaN(resolved.getTime())) return acc;
+          return acc + (resolved.getTime() - created.getTime());
+        } catch {
+          return acc;
+        }
       }, 0) / resolvedComplaints.length / (1000 * 60 * 60 * 24)).toFixed(1)
     : "0";
 
@@ -290,7 +325,21 @@ export default function AdminDashboard() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {complaint.createdAt ? format(new Date(complaint.createdAt), "MMM dd, HH:mm") : "Unknown"}
+                          {(() => {
+                            if (!complaint.createdAt) return "Unknown";
+                            try {
+                              let date;
+                              if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'seconds' in complaint.createdAt) {
+                                const timestamp = complaint.createdAt as any;
+                                date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                              } else {
+                                date = new Date(complaint.createdAt);
+                              }
+                              return !isNaN(date.getTime()) ? format(date, "MMM dd, HH:mm") : "Unknown";
+                            } catch {
+                              return "Unknown";
+                            }
+                          })()}
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">

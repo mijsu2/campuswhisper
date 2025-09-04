@@ -58,7 +58,21 @@ export default function ResolvedCases() {
                     {complaint.resolution || "Resolution details available upon request."}
                   </p>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Resolved: {complaint.resolvedAt ? format(new Date(complaint.resolvedAt), "MMM dd, yyyy") : "Unknown"}</span>
+                    <span>Resolved: {(() => {
+                      if (!complaint.resolvedAt) return "Unknown";
+                      try {
+                        let date;
+                        if (complaint.resolvedAt && typeof complaint.resolvedAt === 'object' && 'seconds' in complaint.resolvedAt) {
+                          const timestamp = complaint.resolvedAt as any;
+                          date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                        } else {
+                          date = new Date(complaint.resolvedAt);
+                        }
+                        return !isNaN(date.getTime()) ? format(date, "MMM dd, yyyy") : "Unknown";
+                      } catch {
+                        return "Unknown";
+                      }
+                    })()}</span>
                     <span>Category: {category?.name}</span>
                   </div>
                 </CardContent>
@@ -115,10 +129,21 @@ export default function ResolvedCases() {
                           </div>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {complaint.resolvedAt ? (() => {
-                            const date = new Date(complaint.resolvedAt);
-                            return !isNaN(date.getTime()) ? format(date, "MMM dd, yyyy") : "N/A";
-                          })() : "N/A"}
+                          {(() => {
+                            if (!complaint.resolvedAt) return "N/A";
+                            try {
+                              let date;
+                              if (complaint.resolvedAt && typeof complaint.resolvedAt === 'object' && 'seconds' in complaint.resolvedAt) {
+                                const timestamp = complaint.resolvedAt as any;
+                                date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                              } else {
+                                date = new Date(complaint.resolvedAt);
+                              }
+                              return !isNaN(date.getTime()) ? format(date, "MMM dd, yyyy") : "N/A";
+                            } catch {
+                              return "N/A";
+                            }
+                          })()}
                         </TableCell>
                         <TableCell>
                           <Button
