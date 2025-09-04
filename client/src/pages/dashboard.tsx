@@ -149,10 +149,10 @@ export default function Dashboard() {
       </div>
 
       {/* Category Chart and Live Feedback Ticker */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 items-start">
         <div className="lg:col-span-2">
           {stats && (
-            <Card>
+            <Card className="h-fit">
               <CardHeader>
                 <CardTitle>Submissions by Category</CardTitle>
               </CardHeader>
