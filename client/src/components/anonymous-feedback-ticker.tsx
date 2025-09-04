@@ -18,6 +18,7 @@ interface FeedbackItem {
 
 export default function AnonymousFeedbackTicker() {
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchFeedback = async () => {
@@ -49,7 +50,7 @@ export default function AnonymousFeedbackTicker() {
         const dateA = new Date(a.createdAt).getTime();
         const dateB = new Date(b.createdAt).getTime();
         return dateB - dateA; // Most recent first
-      }).slice(0, 10); // Show only last 10 items
+      });
 
       setFeedbackItems(allItems);
       setIsLoading(false);
@@ -89,7 +90,15 @@ export default function AnonymousFeedbackTicker() {
     return () => clearInterval(interval);
   }, []);
 
-  
+  // Auto-rotate through items
+  useEffect(() => {
+    if (feedbackItems.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % feedbackItems.length);
+      }, 4000); // Change every 4 seconds
+      return () => clearInterval(interval);
+    }
+  }, [feedbackItems.length]);
 
   if (isLoading) {
     return (
@@ -130,6 +139,8 @@ export default function AnonymousFeedbackTicker() {
     );
   }
 
+  const currentItem = feedbackItems[currentIndex];
+
   return (
     <Card className="h-full relative overflow-hidden">
       <CardHeader>
@@ -140,76 +151,69 @@ export default function AnonymousFeedbackTicker() {
           </div>
           <span>Live Feedback Ticker</span>
           <Badge variant="secondary" className="text-xs">
-            {Math.min(5, feedbackItems.length)} recent submissions
+            {feedbackItems.length} recent submissions
           </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="space-y-3">
-          {feedbackItems.slice(0, 5).map((item, index) => (
-            <div
-              key={item.id}
-              className={cn(
-                "transition-all duration-300 p-3 rounded-lg border border-border/50 hover:border-primary/30",
-                "bg-accent/30 hover:bg-accent/50"
-              )}
-            >
-              <div className="space-y-2">
-                {/* Header with type and category */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    {item.type === 'complaint' ? (
-                      <MessageSquare className="h-4 w-4 text-red-500" />
-                    ) : (
-                      <Lightbulb className="h-4 w-4 text-yellow-500" />
-                    )}
-                    <Badge 
-                      variant={item.type === 'complaint' ? 'destructive' : 'default'}
-                      className="capitalize text-xs"
-                    >
-                      {item.type}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {item.category}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{item.timeAgo}</span>
-                  </div>
+        <div className="relative h-48">
+          <div
+            key={currentIndex}
+            className="absolute inset-0 transition-all duration-500 ease-in-out animate-in fade-in slide-in-from-right-4"
+          >
+            <div className="space-y-4">
+              {/* Header with type and category */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {currentItem.type === 'complaint' ? (
+                    <MessageSquare className="h-4 w-4 text-red-500" />
+                  ) : (
+                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                  )}
+                  <Badge 
+                    variant={currentItem.type === 'complaint' ? 'destructive' : 'default'}
+                    className="capitalize text-xs"
+                  >
+                    {currentItem.type}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {currentItem.category}
+                  </Badge>
                 </div>
-
-                {/* Anonymous User and Reference ID */}
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center space-x-2">
-                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                    <span className="text-muted-foreground font-medium">Anonymous user</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Hash className="h-3 w-3 text-muted-foreground" />
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {item.referenceId}
-                    </span>
-                  </div>
+                <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  <span>{currentItem.timeAgo}</span>
                 </div>
               </div>
+
+              {/* Anonymous User and Reference ID */}
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                  <span className="text-muted-foreground font-medium">Anonymous user</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Hash className="h-3 w-3 text-muted-foreground" />
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {currentItem.referenceId}
+                  </span>
+                </div>
+              </div>
+
+              {/* Progress indicator */}
+              <div className="flex space-x-1 justify-center mt-8">
+                {feedbackItems.slice(0, 5).map((_, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "h-1.5 rounded-full transition-all duration-300",
+                      index === (currentIndex % 5) ? "w-6 bg-primary" : "w-1.5 bg-muted"
+                    )}
+                  />
+                ))}
+              </div>
             </div>
-          ))}
-          
-          {feedbackItems.length === 0 && (
-            <div className="text-center text-muted-foreground py-8">
-              <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No recent submissions</p>
-            </div>
-          )}
-          
-          {feedbackItems.length > 5 && (
-            <div className="text-center py-2">
-              <Badge variant="secondary" className="text-xs">
-                +{feedbackItems.length - 5} more submissions
-              </Badge>
-            </div>
-          )}
+          </div>
         </div>
       </CardContent>
     </Card>
