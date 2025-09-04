@@ -128,7 +128,7 @@ export default function AdminDashboard() {
     : "0";
 
   return (
-    <div className="p-8" data-testid="admin-dashboard-page">
+    <div className="page-container" data-testid="admin-dashboard-page">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>

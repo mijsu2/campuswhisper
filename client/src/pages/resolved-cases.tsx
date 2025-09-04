@@ -32,7 +32,7 @@ export default function ResolvedCases() {
   }
 
   return (
-    <div className="p-8" data-testid="resolved-cases-page">
+    <div className="page-container" data-testid="resolved-cases-page">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Resolved Cases</h1>
         <p className="text-muted-foreground">View completed investigations and their outcomes</p>

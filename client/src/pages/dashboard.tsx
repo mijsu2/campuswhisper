@@ -45,7 +45,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-8" data-testid="dashboard-page">
+    <div className="page-container" data-testid="dashboard-page">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Welcome to Campus Voice</h1>
         <p className="text-muted-foreground">Your anonymous platform for feedback and suggestions</p>

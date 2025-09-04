@@ -43,7 +43,7 @@ const faqs = [
 
 export default function FAQ() {
   return (
-    <div className="p-8" data-testid="faq-page">
+    <div className="page-container" data-testid="faq-page">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Frequently Asked Questions</h1>

@@ -31,7 +31,7 @@ export default function TrackIssues() {
   });
 
   return (
-    <div className="p-8" data-testid="track-issues-page">
+    <div className="page-container" data-testid="track-issues-page">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Track Submissions</h1>
         <p className="text-muted-foreground">Monitor the status of reported issues and suggestions</p>
