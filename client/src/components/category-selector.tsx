@@ -28,7 +28,7 @@ export default function CategorySelector({
       <label className="block text-sm font-medium text-foreground mb-3">Category *</label>
       <div className={cn(
         layout === "grid" 
-          ? "grid grid-cols-2 md:grid-cols-2 gap-3" 
+          ? "grid grid-cols-1 md:grid-cols-2 gap-3" 
           : "space-y-3"
       )}>
         {CATEGORIES.map((category) => (
