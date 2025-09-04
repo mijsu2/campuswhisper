@@ -196,18 +196,24 @@ export default function AnonymousFeedbackTicker() {
                 </div>
               </div>
 
-              {/* Reference ID */}
-              <div className="flex items-center space-x-2 text-sm">
-                <Hash className="h-4 w-4 text-muted-foreground" />
-                <span className="font-mono text-muted-foreground">
-                  {currentItem.referenceId}
-                </span>
+              {/* Anonymous User and Reference ID */}
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                  <span className="text-muted-foreground font-medium">Anonymous user</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Hash className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-mono text-muted-foreground">
+                    {currentItem.referenceId}
+                  </span>
+                </div>
               </div>
 
-              {/* Preview text */}
+              {/* Submission info */}
               <div className="bg-muted/50 rounded-lg p-3">
                 <p className="text-sm text-foreground leading-relaxed">
-                  "{currentItem.preview}"
+                  Submitted a new {currentItem.type} in the {currentItem.category} category
                 </p>
               </div>
 
