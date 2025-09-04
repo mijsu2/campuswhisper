@@ -167,7 +167,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-background" data-testid="admin-dashboard">
         <AdminTopbar />
       
-      <main className="p-6">
+      <div className="p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard Overview</h1>
@@ -377,5 +377,6 @@ export default function AdminDashboard() {
         </Card>
       </div>
     </div>
+    </>
   );
 }
