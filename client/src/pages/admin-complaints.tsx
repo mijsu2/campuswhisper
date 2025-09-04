@@ -16,7 +16,8 @@ import {
   Clock,
   AlertTriangle,
   FileText,
-  Shield
+  Shield,
+  CheckCircle2
 } from "lucide-react";
 import { format } from "date-fns";
 import { Complaint } from "@shared/schema";
