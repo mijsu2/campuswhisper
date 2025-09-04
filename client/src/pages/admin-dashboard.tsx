@@ -608,7 +608,7 @@ export default function AdminDashboard() {
                   <Download className="mr-2 h-4 w-4" />
                   Export Data
                 </Button>
-                <Link href="/track">
+                <Link href="/admin/complaints">
                   <Button size="sm" data-testid="button-view-all" className="shadow-md">
                     View All
                   </Button>
