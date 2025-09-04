@@ -147,7 +147,7 @@ export default function AnonymousFeedbackTicker() {
   const displayItems = feedbackItems.slice(0, 3);
 
   return (
-    <Card className="h-[400px] relative overflow-hidden">
+    <Card className="h-[500px] relative overflow-hidden">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <div className="relative">
@@ -160,7 +160,7 @@ export default function AnonymousFeedbackTicker() {
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 h-80">
+      <CardContent className="p-4 h-[420px]">
         <div className="space-y-4 h-full overflow-y-auto">
           {displayItems.map((item, index) => (
             <div
