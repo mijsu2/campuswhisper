@@ -158,10 +158,16 @@ export default function AdminDashboard() {
     : "0";
 
   return (
-    <div className="min-h-screen bg-background" data-testid="admin-dashboard">
-      <AdminTopbar />
+    <>
+      <style>{`
+        [data-testid="topbar"] {
+          display: none !important;
+        }
+      `}</style>
+      <div className="min-h-screen bg-background" data-testid="admin-dashboard">
+        <AdminTopbar />
       
-      <div className="p-6">
+      <main className="p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard Overview</h1>
