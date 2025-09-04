@@ -210,12 +210,7 @@ export default function AnonymousFeedbackTicker() {
                 </div>
               </div>
 
-              {/* Submission info */}
-              <div className="bg-muted/50 rounded-lg p-3">
-                <p className="text-sm text-foreground leading-relaxed">
-                  Submitted a new {currentItem.type} in the {currentItem.category} category
-                </p>
-              </div>
+              
 
               {/* Progress indicator */}
               <div className="flex space-x-1 justify-center mt-4">
