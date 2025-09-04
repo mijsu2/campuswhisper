@@ -36,7 +36,7 @@ export default function AnonymousFeedbackTicker() {
           id: item.id,
           type,
           category: type === 'complaint' ? (item.category || 'General') : (item.type || 'General'),
-          preview: item.description?.substring(0, 50) + (item.description?.length > 50 ? '...' : '') || `Anonymous ${type} submitted`,
+          preview: item.description || item.subject || `Anonymous ${type} submitted`,
           timeAgo: getTimeAgo(item.createdAt),
           referenceId: item.referenceId || 'N/A',
           createdAt: item.createdAt
@@ -188,12 +188,10 @@ export default function AnonymousFeedbackTicker() {
 
               {/* Content Preview */}
               <div className="flex-1 flex items-center justify-center">
-                <div className="text-center space-y-3">
-                  <div className="text-sm text-muted-foreground bg-muted/30 rounded-lg p-4">
-                    <p className="leading-relaxed">
-                      {currentItem.preview}
-                    </p>
-                  </div>
+                <div className="text-center space-y-3 w-full">
+                  <p className="text-sm text-muted-foreground leading-relaxed px-4">
+                    {currentItem.preview}
+                  </p>
                 </div>
               </div>
 
