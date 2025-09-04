@@ -1,15 +1,15 @@
-import { initializeApp, getApps, App, applicationDefault } from 'firebase-admin/app';
+import { initializeApp, getApps, App } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import admin from 'firebase-admin';
+import { credential } from 'firebase-admin';
 
 let app: App;
 
 const initializeFirebase = () => {
   if (getApps().length === 0) {
     try {
-      // Initialize with Google API key for campuswhispers-9edfe project
+      // Firebase config for campuswhispers-9edfe project
       const firebaseConfig = {
-        apiKey: process.env.GOOGLE_API_KEY,
+        apiKey: "AIzaSyAYQrEwrW2xOD4PyoQjDYwdCLIeLTn39IM",
         authDomain: "campuswhispers-9edfe.firebaseapp.com",
         projectId: "campuswhispers-9edfe",
         storageBucket: "campuswhispers-9edfe.firebasestorage.app",
@@ -18,7 +18,7 @@ const initializeFirebase = () => {
       };
 
       // For admin SDK, we need to use service account or application default credentials
-      // If no service account is available, use application default credentials
+      // If no service account is available, use application default credentials for development
       if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
         const serviceAccount = {
           type: "service_account",
@@ -34,11 +34,11 @@ const initializeFirebase = () => {
         };
         
         app = initializeApp({
-          credential: admin.credential.cert(serviceAccount as any),
+          credential: credential.cert(serviceAccount as any),
           projectId: "campuswhispers-9edfe",
         });
       } else {
-        // Use application default credentials or initialize without credentials for development
+        // Initialize with project ID for development
         app = initializeApp({
           projectId: "campuswhispers-9edfe",
         });

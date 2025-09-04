@@ -93,3 +93,9 @@ Key features include:
 
 ### Date & Time Utilities
 - **date-fns**: Date manipulation and formatting library
+
+### Firebase Integration
+- **Firebase Project**: campuswhispers-9edfe
+- **Configuration Applied**: Client-side API key and project settings configured
+- **Firestore Database**: Ready for connection pending service account credentials
+- **Current Storage**: In-memory (temporary) until Firestore credentials are provided
