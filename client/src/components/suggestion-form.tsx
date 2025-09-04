@@ -1,21 +1,27 @@
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { insertSuggestionSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FloatingInput, FloatingTextarea } from "@/components/floating-input";
 import { SUGGESTION_TYPES } from "@/lib/constants";
-import { Lightbulb, RotateCcw } from "lucide-react";
+import { Lightbulb, RotateCcw, CheckCircle } from "lucide-react";
 import { z } from "zod";
 
 type FormData = z.infer<typeof insertSuggestionSchema>;
 
 export default function SuggestionForm() {
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submissionResult, setSubmissionResult] = useState<{ referenceId: string } | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
 
   const form = useForm<FormData>({
     resolver: zodResolver(insertSuggestionSchema),
@@ -32,12 +38,11 @@ export default function SuggestionForm() {
       const response = await apiRequest("POST", "/api/suggestions", data);
       return response.json();
     },
-    onSuccess: () => {
-      toast({
-        title: "Suggestion Submitted Successfully",
-        description: "Thank you for your valuable suggestion! We'll review it carefully.",
-      });
+    onSuccess: (data) => {
+      setSubmissionResult(data);
+      setShowSuccessModal(true);
       queryClient.invalidateQueries({ queryKey: ["/api/suggestions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       form.reset();
     },
     onError: () => {
@@ -50,8 +55,30 @@ export default function SuggestionForm() {
   });
 
   const onSubmit = (data: FormData) => {
+    // Validate required fields
+    if (!data.title?.trim() || !data.description?.trim() || !data.type?.trim()) {
+      toast({
+        title: "Please fill in all required fields",
+        description: "Title, description, and type are required to submit a suggestion.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     createSuggestionMutation.mutate(data);
   };
+
+  // Auto-redirect to dashboard after 4 seconds
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        setShowSuccessModal(false);
+        setLocation('/');
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal, setLocation]);
 
   const clearForm = () => {
     form.reset();
@@ -130,6 +157,53 @@ export default function SuggestionForm() {
           </Button>
         </div>
       </form>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+              <span>Suggestion Submitted Successfully!</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg">
+              <p className="text-sm text-green-800 dark:text-green-200 mb-2">
+                Thank you for your valuable suggestion! We'll review it carefully.
+              </p>
+              {submissionResult && (
+                <div className="bg-white dark:bg-slate-800 p-3 rounded border">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Reference ID:
+                  </p>
+                  <p className="font-mono text-lg font-bold text-blue-600 dark:text-blue-400">
+                    {submissionResult.referenceId}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                    Keep this ID for tracking your suggestion status
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Redirecting to dashboard in a few seconds...
+              </p>
+              <Button 
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setLocation('/');
+                }}
+                className="mt-3"
+                variant="outline"
+              >
+                Go to Dashboard Now
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
