@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { insertComplaintSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -29,7 +29,7 @@ export default function ComplaintForm() {
   const [submissionResult, setSubmissionResult] = useState<{ referenceId: string } | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -85,12 +85,12 @@ export default function ComplaintForm() {
     if (showSuccessModal) {
       const timer = setTimeout(() => {
         setShowSuccessModal(false);
-        navigate('/dashboard');
+        setLocation('/dashboard');
       }, 4000);
 
       return () => clearTimeout(timer);
     }
-  }, [showSuccessModal, navigate]);
+  }, [showSuccessModal, setLocation]);
 
   const clearForm = () => {
     form.reset();
@@ -237,7 +237,7 @@ export default function ComplaintForm() {
               <Button 
                 onClick={() => {
                   setShowSuccessModal(false);
-                  navigate('/dashboard');
+                  setLocation('/dashboard');
                 }}
                 className="mt-3"
                 variant="outline"
