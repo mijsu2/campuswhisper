@@ -13,6 +13,8 @@ import TrendsChart from "@/components/charts/trends-chart";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import AdminTopbar from "@/components/layout/admin-topbar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Clock, 
   Search, 
@@ -42,6 +44,8 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [timeRange, setTimeRange] = useState("6months");
+  const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const [resolution, setResolution] = useState("");
 
   const { data: stats, isLoading: statsLoading } = useQuery<StatsData>({
     queryKey: ["/api/stats"],
@@ -56,8 +60,8 @@ export default function AdminDashboard() {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const response = await apiRequest("PATCH", `/api/complaints/${id}/status`, { status });
+    mutationFn: async ({ id, status, resolution }: { id: string; status: string; resolution?: string }) => {
+      const response = await apiRequest("PATCH", `/api/complaints/${id}/status`, { status, resolution });
       return response.json();
     },
     onSuccess: () => {
@@ -67,6 +71,8 @@ export default function AdminDashboard() {
       });
       queryClient.invalidateQueries({ queryKey: ["/api/complaints"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      setSelectedComplaint(null);
+      setResolution("");
     },
     onError: () => {
       toast({
@@ -223,6 +229,20 @@ export default function AdminDashboard() {
       return false;
     }
   }).length;
+
+  const handleResolve = (complaint: Complaint) => {
+    setSelectedComplaint(complaint);
+  };
+
+  const submitResolution = () => {
+    if (selectedComplaint && resolution.trim()) {
+      updateStatusMutation.mutate({
+        id: selectedComplaint.id,
+        status: "resolved",
+        resolution: resolution.trim()
+      });
+    }
+  };
 
   return (
     <>
@@ -593,8 +613,7 @@ export default function AdminDashboard() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    onClick={() => updateStatusMutation.mutate({ id: complaint.id, status: "resolved" })}
-                                    disabled={updateStatusMutation.isPending}
+                                    onClick={() => handleResolve(complaint)}
                                     data-testid={`button-resolve-${complaint.referenceId}`}
                                   >
                                     <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -620,6 +639,42 @@ export default function AdminDashboard() {
           </Card>
         </div>
       </div>
+
+      {/* Resolution Dialog */}
+      <Dialog open={!!selectedComplaint} onOpenChange={() => setSelectedComplaint(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Resolve Complaint</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">Complaint ID: {selectedComplaint?.referenceId}</p>
+              <p className="font-medium">{selectedComplaint?.subject}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Resolution Details</label>
+              <Textarea
+                placeholder="Describe how this complaint was resolved..."
+                value={resolution}
+                onChange={(e) => setResolution(e.target.value)}
+                rows={4}
+                className="mt-1"
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setSelectedComplaint(null)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={submitResolution}
+                disabled={!resolution.trim() || updateStatusMutation.isPending}
+              >
+                Mark as Resolved
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
