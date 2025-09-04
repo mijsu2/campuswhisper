@@ -530,7 +530,7 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               ) : recentComplaints.length > 0 ? (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto max-h-96 overflow-y-auto border rounded-md">
                   <Table>
                     <TableHeader>
                       <TableRow>
