@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { insertComplaintSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -9,10 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FloatingInput, FloatingTextarea } from "@/components/floating-input";
 import CategorySelector from "@/components/category-selector";
 import { PRIORITY_LEVELS } from "@/lib/constants";
-import { Send, RotateCcw } from "lucide-react";
+import { Send, RotateCcw, CheckCircle } from "lucide-react";
 import { z } from "zod";
 
 const formSchema = insertComplaintSchema.extend({
@@ -23,8 +25,11 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function ComplaintForm() {
   const [showContactFields, setShowContactFields] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submissionResult, setSubmissionResult] = useState<{ referenceId: string } | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -45,10 +50,8 @@ export default function ComplaintForm() {
       return response.json();
     },
     onSuccess: (data) => {
-      toast({
-        title: "Complaint Submitted Successfully",
-        description: `Your reference ID is: ${data.referenceId}. Keep this for tracking.`,
-      });
+      setSubmissionResult(data);
+      setShowSuccessModal(true);
       queryClient.invalidateQueries({ queryKey: ["/api/complaints"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       form.reset();
@@ -64,8 +67,30 @@ export default function ComplaintForm() {
   });
 
   const onSubmit = (data: FormData) => {
+    // Validate required fields
+    if (!data.subject?.trim() || !data.description?.trim() || !data.category?.trim()) {
+      toast({
+        title: "Please fill in all required fields",
+        description: "Subject, description, and category are required to submit a complaint.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     createComplaintMutation.mutate(data);
   };
+
+  // Auto-redirect to dashboard after 4 seconds
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        setShowSuccessModal(false);
+        navigate('/dashboard');
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal, navigate]);
 
   const clearForm = () => {
     form.reset();
@@ -176,6 +201,53 @@ export default function ComplaintForm() {
           </Button>
         </div>
       </form>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+              <span>Complaint Submitted Successfully!</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg">
+              <p className="text-sm text-green-800 dark:text-green-200 mb-2">
+                Your complaint has been submitted and will be reviewed by our team.
+              </p>
+              {submissionResult && (
+                <div className="bg-white dark:bg-slate-800 p-3 rounded border">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Reference ID:
+                  </p>
+                  <p className="font-mono text-lg font-bold text-blue-600 dark:text-blue-400">
+                    {submissionResult.referenceId}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                    Keep this ID for tracking your complaint status
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Redirecting to dashboard in a few seconds...
+              </p>
+              <Button 
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate('/dashboard');
+                }}
+                className="mt-3"
+                variant="outline"
+              >
+                Go to Dashboard Now
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
