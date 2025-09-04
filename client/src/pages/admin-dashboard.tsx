@@ -25,7 +25,10 @@ import {
   Lightbulb,
   BarChart3,
   Calendar,
-  Shield
+  Shield,
+  Download,
+  Eye,
+  CheckCircle2
 } from "lucide-react";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 import { Complaint, Suggestion } from "@shared/schema";
