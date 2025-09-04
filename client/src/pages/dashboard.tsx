@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import StatsCard from "@/components/stats-card";
 import CategoryChart from "@/components/charts/category-chart";
+import LiveSubmissions from "@/components/live-submissions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
@@ -147,17 +148,35 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Category Chart */}
-      {stats && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Submissions by Category</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CategoryChart data={stats.byCategory} />
-          </CardContent>
-        </Card>
-      )}
+      {/* Category Chart and Live Submissions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          {stats && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Submissions by Category</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CategoryChart data={stats.byCategory} />
+              </CardContent>
+            </Card>
+          )}
+        </div>
+        
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Live Activity</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LiveSubmissions />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
