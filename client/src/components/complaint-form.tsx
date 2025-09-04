@@ -179,10 +179,10 @@ export default function ComplaintForm() {
           )}
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <Button
             type="submit"
-            className="flex-1 py-4 font-medium"
+            className="w-full sm:flex-1 py-4 font-medium"
             disabled={createComplaintMutation.isPending}
             data-testid="button-submit"
           >
@@ -193,7 +193,7 @@ export default function ComplaintForm() {
             type="button"
             variant="outline"
             onClick={clearForm}
-            className="px-6 py-4 font-medium"
+            className="w-full sm:w-auto sm:px-6 py-4 font-medium"
             data-testid="button-clear"
           >
             <RotateCcw className="h-4 w-4 mr-2" />
