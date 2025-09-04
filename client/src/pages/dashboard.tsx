@@ -84,9 +84,11 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Categories Overview and Quick Actions */}
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2">
+        {/* Left Column - Categories and Chart */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Submission Categories */}
           <Card>
             <CardHeader>
               <CardTitle>Submission Categories</CardTitle>
@@ -115,8 +117,21 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Submissions by Category Chart */}
+          {stats && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Submissions by Category</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CategoryChart data={stats.byCategory} />
+              </CardContent>
+            </Card>
+          )}
         </div>
 
+        {/* Right Column - Quick Actions and Live Feedback */}
         <div className="space-y-8">
           <Card>
             <CardHeader>
@@ -148,20 +163,6 @@ export default function Dashboard() {
           
           <AnonymousFeedbackTicker />
         </div>
-      </div>
-
-      {/* Category Chart */}
-      <div className="mb-8">
-        {stats && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Submissions by Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CategoryChart data={stats.byCategory} />
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );
