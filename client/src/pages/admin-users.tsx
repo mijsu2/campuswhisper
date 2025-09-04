@@ -141,24 +141,34 @@ export default function AdminUsers() {
           display: none !important;
         }
       `}</style>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <AdminTopbar />
         
-        <div className="p-6">
-          <div className="mb-8">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">User Management</h1>
-                <p className="text-muted-foreground">Manage system users and their permissions</p>
+        {/* Hero Section */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 dark:from-blue-400/5 dark:to-indigo-400/5"></div>
+          <div className="relative page-container py-8 sm:py-12">
+            <div className="text-center max-w-4xl mx-auto mb-6 sm:mb-8 px-4">
+              <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-700 dark:text-blue-300 text-xs sm:text-sm font-medium mb-4 sm:mb-6 shadow-sm">
+                <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                System Administration
               </div>
-              <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add User
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-indigo-800 dark:from-white dark:via-blue-200 dark:to-indigo-300 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
+                User Management
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+                Manage system users and their permissions with comprehensive controls
+              </p>
+              
+              <div className="flex justify-center">
+                <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add User
+                    </Button>
+                  </DialogTrigger>
+              <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Add New User</DialogTitle>
                   </DialogHeader>
@@ -218,6 +228,9 @@ export default function AdminUsers() {
               </Dialog>
             </div>
           </div>
+        </div>
+        
+        <div className="page-container pb-12">
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

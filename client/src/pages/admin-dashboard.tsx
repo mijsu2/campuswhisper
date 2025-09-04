@@ -14,17 +14,18 @@ import { useToast } from "@/hooks/use-toast";
 import AdminTopbar from "@/components/layout/admin-topbar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Clock, 
-  Search, 
-  AlertTriangle, 
-  TrendingUp, 
-  Download,
-  Eye,
-  CheckCircle2,
-  BarChart3,
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  AlertTriangle,
+  Clock,
+  CheckCircle,
+  Search,
+  TrendingUp,
   Users,
-  Calendar
+  Lightbulb,
+  BarChart3,
+  Calendar,
+  Shield
 } from "lucide-react";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 import { Complaint, Suggestion } from "@shared/schema";
@@ -36,6 +37,7 @@ interface StatsData {
   pending: number;
   underReview: number;
   resolved: number;
+  recent: number;
   byCategory: Record<string, number>;
 }
 
@@ -138,7 +140,8 @@ export default function AdminDashboard() {
   };
 
   const analyticsData = getAnalyticsData();
-  const recentComplaints = complaints.slice(0, 10);
+  const recentComplaints = complaints.slice(0, 5); // Changed to 5 for better display
+  const recentSuggestions = suggestions.slice(0, 5); // Changed to 5 for better display
   const pendingCount = complaints.filter(c => c.status === "pending").length;
   const underReviewCount = complaints.filter(c => c.status === "under_review").length;
   const resolvedCount = complaints.filter(c => c.status === "resolved").length;
@@ -146,7 +149,7 @@ export default function AdminDashboard() {
 
   // Calculate real resolution metrics
   const resolvedComplaints = complaints.filter(c => c.status === "resolved");
-  const avgResolutionTime = resolvedComplaints.length > 0 
+  const avgResolutionTime = resolvedComplaints.length > 0
     ? (resolvedComplaints.reduce((acc: number, complaint) => {
         if (!complaint.createdAt || !complaint.resolvedAt) return acc;
         try {
@@ -171,7 +174,7 @@ export default function AdminDashboard() {
       }, 0) / resolvedComplaints.length / (1000 * 60 * 60 * 24))
     : 0;
 
-  const resolutionRate = complaints.length > 0 
+  const resolutionRate = complaints.length > 0
     ? Math.round((resolvedComplaints.length / complaints.length) * 100)
     : 0;
 
@@ -243,134 +246,218 @@ export default function AdminDashboard() {
     }
   };
 
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case "pending": return "outline";
+      case "under_review": return "secondary";
+      case "resolved": return "default";
+      default: return "secondary";
+    }
+  };
+
+  const categoryData = stats ? stats.byCategory : {};
+
   return (
     <>
       <style>{`
         [data-testid="topbar"] {
           display: none !important;
         }
+        .page-container {
+          max-width: 1280px;
+          margin-left: auto;
+          margin-right: auto;
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        @media (min-width: 1024px) {
+          .page-container {
+            padding-left: 2rem;
+            padding-right: 2rem;
+          }
+        }
       `}</style>
-      <div className="min-h-screen bg-background" data-testid="admin-dashboard">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-orange-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <AdminTopbar />
 
-        <div className="p-6">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard & Analytics</h1>
-                <p className="text-muted-foreground">Comprehensive overview and insights from platform data</p>
+        {/* Hero Section */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 to-orange-600/10 dark:from-red-400/5 dark:to-orange-400/5"></div>
+          <div className="relative page-container py-8 sm:py-12">
+            <div className="text-center max-w-4xl mx-auto mb-6 sm:mb-8 px-4">
+              <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-red-100 dark:bg-red-900/30 rounded-full text-red-700 dark:text-red-300 text-xs sm:text-sm font-medium mb-4 sm:mb-6 shadow-sm">
+                <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                Administrative Dashboard
               </div>
-              <Select value={timeRange} onValueChange={setTimeRange}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select time range" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="6months">Last 6 Months</SelectItem>
-                  <SelectItem value="12months">Last 12 Months</SelectItem>
-                </SelectContent>
-              </Select>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-slate-900 via-red-800 to-orange-800 dark:from-white dark:via-red-200 dark:to-orange-300 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
+                Dashboard & Analytics
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+                Comprehensive overview and insights from platform data
+              </p>
+
+              <div className="flex justify-center">
+                <Select value={timeRange} onValueChange={setTimeRange}>
+                  <SelectTrigger className="w-48 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-lg">
+                    <SelectValue placeholder="Select time range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="6months">Last 6 Months</SelectItem>
+                    <SelectItem value="12months">Last 12 Months</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Key Metrics */}
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatsCard
-              title="Total Submissions"
-              value={complaints.length + suggestions.length}
-              subtitle={`${complaints.length} complaints, ${suggestions.length} suggestions`}
-              icon={BarChart3}
-              iconColor="text-blue-600"
-              iconBg="bg-blue-100 dark:bg-blue-900/30"
-            />
-            <StatsCard
-              title="Resolution Rate"
-              value={`${resolutionRate}%`}
-              subtitle={`${resolvedCount} of ${complaints.length} resolved`}
-              icon={CheckCircle2}
-              iconColor="text-green-600"
-              iconBg="bg-green-100 dark:bg-green-900/30"
-            />
-            <StatsCard
-              title="Avg Resolution Time"
-              value={avgResolutionTime.toFixed(1)}
-              subtitle="days"
-              icon={Clock}
-              iconColor="text-orange-600"
-              iconBg="bg-orange-100 dark:bg-orange-900/30"
-            />
-            <StatsCard
-              title="High Priority"
-              value={highPriorityCount}
-              subtitle={`${Math.round((highPriorityCount / Math.max(complaints.length, 1)) * 100)}% of total`}
-              icon={AlertTriangle}
-              iconColor="text-red-600"
-              iconBg="bg-red-100 dark:bg-red-900/30"
-            />
+        <div className="page-container pb-12">
+          {/* Main Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12 max-w-6xl mx-auto px-4">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">Total Complaints</CardTitle>
+                <div className="bg-red-100 dark:bg-red-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">{stats ? stats.total : 'Loading...'}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stats && stats.recent > 0 ? `+${stats.recent} this week` : 'No new complaints this week'}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">Resolution Rate</CardTitle>
+                <div className="bg-green-100 dark:bg-green-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">{complaints.length > 0 ? `${resolutionRate}%` : 'N/A'}</div>
+                <p className="text-xs text-muted-foreground">
+                  {resolvedCount} of {complaints.length} resolved
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">Avg Resolution Time</CardTitle>
+                <div className="bg-yellow-100 dark:bg-yellow-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-purple-600 bg-clip-text text-transparent">{avgResolutionTime > 0 ? avgResolutionTime.toFixed(1) : 'N/A'}</div>
+                <p className="text-xs text-muted-foreground">
+                  days
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">High Priority</CardTitle>
+                <div className="bg-red-100 dark:bg-red-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">{highPriorityCount}</div>
+                <p className="text-xs text-muted-foreground">
+                  {complaints.length > 0 ? `${Math.round((highPriorityCount / complaints.length) * 100)}% of total` : '0% of total'}
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Status Overview */}
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatsCard
-              title="Pending Review"
-              value={pendingCount}
-              subtitle="awaiting attention"
-              icon={Clock}
-              iconColor="text-amber-600"
-              iconBg="bg-amber-100 dark:bg-amber-900/30"
-            />
-            <StatsCard
-              title="Under Investigation"
-              value={underReviewCount}
-              subtitle="being reviewed"
-              icon={Search}
-              iconColor="text-blue-600"
-              iconBg="bg-blue-100 dark:bg-blue-900/30"
-            />
-            <StatsCard
-              title="Resolved Cases"
-              value={resolvedCount}
-              subtitle="completed"
-              icon={CheckCircle2}
-              iconColor="text-green-600"
-              iconBg="bg-green-100 dark:bg-green-900/30"
-            />
-            <StatsCard
-              title="Suggestions"
-              value={suggestions.length}
-              subtitle="total received"
-              icon={TrendingUp}
-              iconColor="text-purple-600"
-              iconBg="bg-purple-100 dark:bg-purple-900/30"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12 max-w-6xl mx-auto px-4">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">Pending</CardTitle>
+                <div className="bg-yellow-100 dark:bg-yellow-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats ? stats.pending : 'Loading...'}</div>
+                <p className="text-xs text-muted-foreground">
+                  Awaiting review
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">Under Review</CardTitle>
+                <div className="bg-blue-100 dark:bg-blue-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Search className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats ? stats.underReview : 'Loading...'}</div>
+                <p className="text-xs text-muted-foreground">
+                  Being investigated
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">Resolved</CardTitle>
+                <div className="bg-green-100 dark:bg-green-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats ? stats.resolved : 'Loading...'}</div>
+                <p className="text-xs text-muted-foreground">
+                  Successfully handled
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-foreground">Suggestions</CardTitle>
+                <div className="bg-purple-100 dark:bg-purple-900/30 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">{suggestions.length}</div>
+                <p className="text-xs text-muted-foreground">
+                  total received
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12 max-w-6xl mx-auto px-4">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <BarChart3 className="h-5 w-5" />
-                  <span>Submissions by Category</span>
-                </CardTitle>
+                <CardTitle className="bg-gradient-to-r from-slate-900 to-red-700 dark:from-white dark:to-red-300 bg-clip-text text-transparent">Category Distribution</CardTitle>
               </CardHeader>
               <CardContent>
-                {stats ? (
-                  <CategoryChart data={stats.byCategory} />
-                ) : (
+                {statsLoading ? (
                   <div className="h-64 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
+                ) : (
+                  <CategoryChart data={categoryData} />
                 )}
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5" />
-                  <span>Submission Trends</span>
-                </CardTitle>
+                <CardTitle className="bg-gradient-to-r from-slate-900 to-red-700 dark:from-white dark:to-red-300 bg-clip-text text-transparent">Trends Over Time</CardTitle>
               </CardHeader>
               <CardContent>
                 <TrendsChart
@@ -384,12 +471,14 @@ export default function AdminDashboard() {
           </div>
 
           {/* Activity & Performance Metrics */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            <Card>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12 max-w-6xl mx-auto px-4">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Users className="h-5 w-5" />
-                  <span>Status Breakdown</span>
+                <CardTitle className="flex items-center bg-gradient-to-r from-slate-900 to-blue-700 dark:from-white dark:to-blue-300 bg-clip-text text-transparent">
+                  <div className="bg-blue-100 dark:bg-blue-900/30 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                    <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  Status Breakdown
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -398,11 +487,11 @@ export default function AdminDashboard() {
                     <span className="text-sm text-muted-foreground">Pending Review</span>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-medium">{pendingCount}</span>
-                      <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-yellow-500"
-                          style={{ 
-                            width: `${complaints.length > 0 ? (pendingCount / complaints.length) * 100 : 0}%` 
+                      <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-yellow-500 transition-all duration-500"
+                          style={{
+                            width: `${complaints.length > 0 ? (pendingCount / complaints.length) * 100 : 0}%`
                           }}
                         ></div>
                       </div>
@@ -412,11 +501,11 @@ export default function AdminDashboard() {
                     <span className="text-sm text-muted-foreground">Under Review</span>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-medium">{underReviewCount}</span>
-                      <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-blue-500"
-                          style={{ 
-                            width: `${complaints.length > 0 ? (underReviewCount / complaints.length) * 100 : 0}%` 
+                      <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-blue-500 transition-all duration-500"
+                          style={{
+                            width: `${complaints.length > 0 ? (underReviewCount / complaints.length) * 100 : 0}%`
                           }}
                         ></div>
                       </div>
@@ -426,11 +515,11 @@ export default function AdminDashboard() {
                     <span className="text-sm text-muted-foreground">Resolved</span>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-medium">{resolvedCount}</span>
-                      <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-green-500"
-                          style={{ 
-                            width: `${complaints.length > 0 ? (resolvedCount / complaints.length) * 100 : 0}%` 
+                      <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-green-500 transition-all duration-500"
+                          style={{
+                            width: `${complaints.length > 0 ? (resolvedCount / complaints.length) * 100 : 0}%`
                           }}
                         ></div>
                       </div>
@@ -440,15 +529,17 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5" />
-                  <span>Recent Activity</span>
+                <CardTitle className="flex items-center bg-gradient-to-r from-slate-900 to-cyan-700 dark:from-white dark:to-cyan-300 bg-clip-text text-transparent">
+                  <div className="bg-cyan-100 dark:bg-cyan-900/30 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                    <Calendar className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                  </div>
+                  Recent Activity
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="text-sm">
                     <p className="font-medium">Today</p>
                     <p className="text-muted-foreground">
@@ -471,25 +562,27 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5" />
-                  <span>Performance Metrics</span>
+                <CardTitle className="flex items-center bg-gradient-to-r from-slate-900 to-indigo-700 dark:from-white dark:to-indigo-300 bg-clip-text text-transparent">
+                  <div className="bg-indigo-100 dark:bg-indigo-900/30 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                    <TrendingUp className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  Performance Metrics
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="text-sm">
                     <p className="font-medium">Response Time</p>
                     <p className="text-muted-foreground">
-                      Avg: {avgResolutionTime.toFixed(1)} days
+                      Avg: {avgResolutionTime > 0 ? avgResolutionTime.toFixed(1) : 'N/A'} days
                     </p>
                   </div>
                   <div className="text-sm">
                     <p className="font-medium">Resolution Rate</p>
                     <p className="text-muted-foreground">
-                      {resolutionRate}% cases resolved
+                      {complaints.length > 0 ? `${resolutionRate}%` : 'N/A'} cases resolved
                     </p>
                   </div>
                   <div className="text-sm">
@@ -504,21 +597,19 @@ export default function AdminDashboard() {
           </div>
 
           {/* Recent Submissions Table */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Recent Submissions</CardTitle>
-                <div className="flex space-x-2">
-                  <Button variant="secondary" size="sm" data-testid="button-export-data">
-                    <Download className="mr-2 h-4 w-4" />
-                    Export Data
+          <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 max-w-6xl mx-auto px-4">
+            <CardHeader className="flex items-center justify-between">
+              <CardTitle className="bg-gradient-to-r from-slate-900 to-red-700 dark:from-white dark:to-red-300 bg-clip-text text-transparent">Recent Submissions</CardTitle>
+              <div className="flex space-x-2">
+                <Button variant="secondary" size="sm" data-testid="button-export-data" className="shadow-md">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export Data
+                </Button>
+                <Link href="/track">
+                  <Button size="sm" data-testid="button-view-all" className="shadow-md">
+                    View All
                   </Button>
-                  <Link href="/track">
-                    <Button size="sm" data-testid="button-view-all">
-                      View All
-                    </Button>
-                  </Link>
-                </div>
+                </Link>
               </div>
             </CardHeader>
             <CardContent>
@@ -529,17 +620,17 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               ) : recentComplaints.length > 0 ? (
-                <div className="overflow-x-auto max-h-96 overflow-y-auto border rounded-md">
+                <div className="overflow-x-auto max-h-96 overflow-y-auto border rounded-md shadow-inner bg-white/50 dark:bg-slate-800/50">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>Subject</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Priority</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Submitted</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead className="text-muted-foreground font-normal">ID</TableHead>
+                        <TableHead className="text-muted-foreground font-normal">Subject</TableHead>
+                        <TableHead className="text-muted-foreground font-normal">Category</TableHead>
+                        <TableHead className="text-muted-foreground font-normal">Priority</TableHead>
+                        <TableHead className="text-muted-foreground font-normal">Status</TableHead>
+                        <TableHead className="text-muted-foreground font-normal">Submitted</TableHead>
+                        <TableHead className="text-muted-foreground font-normal">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -548,12 +639,12 @@ export default function AdminDashboard() {
                         const statusInfo = STATUS_OPTIONS.find(s => s.id === complaint.status);
 
                         return (
-                          <TableRow 
-                            key={complaint.id} 
-                            className="hover:bg-muted/50 transition-colors"
+                          <TableRow
+                            key={complaint.id}
+                            className="hover:bg-gradient-to-r from-red-50 to-orange-50 dark:hover:from-slate-800 dark:hover:to-slate-900/50 transition-colors duration-200"
                             data-testid={`admin-row-${complaint.referenceId}`}
                           >
-                            <TableCell className="font-mono text-sm">{complaint.referenceId}</TableCell>
+                            <TableCell className="font-mono text-sm text-foreground">{complaint.referenceId}</TableCell>
                             <TableCell>
                               <div className="text-sm font-medium text-foreground line-clamp-1">
                                 {complaint.subject}
@@ -563,11 +654,12 @@ export default function AdminDashboard() {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant="secondary">{category?.name}</Badge>
+                              <Badge variant="outline" className="shadow-sm">{category?.name || 'N/A'}</Badge>
                             </TableCell>
                             <TableCell>
-                              <Badge 
+                              <Badge
                                 variant={complaint.priority === "high" || complaint.priority === "urgent" ? "destructive" : "secondary"}
+                                className="shadow-sm"
                               >
                                 {complaint.priority}
                               </Badge>
@@ -577,17 +669,17 @@ export default function AdminDashboard() {
                                 {(() => {
                                   switch (complaint.status) {
                                     case "pending":
-                                      return <Clock className="h-4 w-4" />;
+                                      return <Clock className="h-4 w-4 text-yellow-500" />;
                                     case "under_review":
-                                      return <Search className="h-4 w-4" />;
+                                      return <Search className="h-4 w-4 text-blue-500" />;
                                     case "resolved":
-                                      return <CheckCircle2 className="h-4 w-4" />;
+                                      return <CheckCircle className="h-4 w-4 text-green-500" />;
                                     default:
-                                      return <AlertTriangle className="h-4 w-4" />;
+                                      return <AlertTriangle className="h-4 w-4 text-gray-500" />;
                                   }
                                 })()}
-                                <Badge className={statusInfo?.color}>
-                                  {statusInfo?.name}
+                                <Badge className={statusInfo?.color + " shadow-sm"}>
+                                  {statusInfo?.name || 'Unknown'}
                                 </Badge>
                               </div>
                             </TableCell>
@@ -612,11 +704,12 @@ export default function AdminDashboard() {
                               <div className="flex space-x-2">
                                 {complaint.status === "pending" && (
                                   <Button
-                                    size="sm"
+                                    size="xs"
                                     variant="outline"
                                     onClick={() => updateStatusMutation.mutate({ id: complaint.id, status: "under_review" })}
                                     disabled={updateStatusMutation.isPending}
                                     data-testid={`button-assign-${complaint.referenceId}`}
+                                    className="shadow-sm"
                                   >
                                     <Eye className="h-3 w-3 mr-1" />
                                     Review
@@ -624,10 +717,11 @@ export default function AdminDashboard() {
                                 )}
                                 {complaint.status === "under_review" && (
                                   <Button
-                                    size="sm"
+                                    size="xs"
                                     variant="outline"
                                     onClick={() => handleResolve(complaint)}
                                     data-testid={`button-resolve-${complaint.referenceId}`}
+                                    className="shadow-sm"
                                   >
                                     <CheckCircle2 className="h-3 w-3 mr-1" />
                                     Resolve
@@ -655,17 +749,17 @@ export default function AdminDashboard() {
 
       {/* Resolution Dialog */}
       <Dialog open={!!selectedComplaint} onOpenChange={() => setSelectedComplaint(null)}>
-        <DialogContent>
+        <DialogContent className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0">
           <DialogHeader>
-            <DialogTitle>Resolve Complaint</DialogTitle>
+            <DialogTitle className="bg-gradient-to-r from-slate-900 to-red-700 dark:from-white dark:to-red-300 bg-clip-text text-transparent">Resolve Complaint</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground mb-2">Complaint ID: {selectedComplaint?.referenceId}</p>
-              <p className="font-medium">{selectedComplaint?.subject}</p>
+              <p className="font-medium text-foreground">{selectedComplaint?.subject}</p>
             </div>
             <div>
-              <label className="text-sm font-medium">Resolution Details</label>
+              <label className="text-sm font-medium text-foreground">Resolution Details</label>
               <Textarea
                 placeholder="Describe how this complaint was resolved..."
                 value={resolution}
@@ -675,12 +769,13 @@ export default function AdminDashboard() {
               />
             </div>
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setSelectedComplaint(null)}>
+              <Button variant="outline" onClick={() => setSelectedComplaint(null)} className="shadow-sm">
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={submitResolution}
                 disabled={!resolution.trim() || updateStatusMutation.isPending}
+                className="shadow-sm"
               >
                 Mark as Resolved
               </Button>

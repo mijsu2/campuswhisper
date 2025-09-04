@@ -92,14 +92,29 @@ export default function AdminSuggestions() {
           display: none !important;
         }
       `}</style>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-amber-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <AdminTopbar />
         
-        <div className="p-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Suggestions Management</h1>
-            <p className="text-muted-foreground">Review and manage improvement suggestions from the community</p>
+        {/* Hero Section */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-amber-600/10 dark:from-orange-400/5 dark:to-amber-400/5"></div>
+          <div className="relative page-container py-8 sm:py-12">
+            <div className="text-center max-w-4xl mx-auto mb-6 sm:mb-8 px-4">
+              <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-orange-100 dark:bg-orange-900/30 rounded-full text-orange-700 dark:text-orange-300 text-xs sm:text-sm font-medium mb-4 sm:mb-6 shadow-sm">
+                <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                Community Suggestions
+              </div>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-slate-900 via-orange-800 to-amber-800 dark:from-white dark:via-orange-200 dark:to-amber-300 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
+                Suggestions Management
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+                Review and manage improvement suggestions from the community
+              </p>
+            </div>
           </div>
+        </div>
+        
+        <div className="page-container pb-12">
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
