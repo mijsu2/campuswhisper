@@ -22,7 +22,6 @@ const adminNavigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "All Complaints", href: "/admin/complaints", icon: FileText },
   { name: "Suggestions", href: "/admin/suggestions", icon: Lightbulb },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
 ];
 
 export default function AdminTopbar() {
