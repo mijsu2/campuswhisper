@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import AnonymousFeedbackTicker from "@/components/anonymous-feedback-ticker";
 
 interface StatsData {
   total: number;
@@ -100,7 +101,7 @@ export default function Dashboard() {
                   >
                     <div className="flex items-center space-x-3">
                       <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center text-white", category.color)}>
-                        📊
+                        {category.icon}
                       </div>
                       <div>
                         <h4 className="font-medium text-foreground">{category.name}</h4>
@@ -147,8 +148,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Category Chart */}
-      {stats && (
+      {/* Category Chart and Feedback Ticker */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
             <CardTitle>Submissions by Category</CardTitle>
@@ -157,7 +158,12 @@ export default function Dashboard() {
             <CategoryChart data={stats.byCategory} />
           </CardContent>
         </Card>
-      )}
+        
+        {/* Anonymous Feedback Ticker */}
+        <div className="lg:col-span-1">
+          <AnonymousFeedbackTicker />
+        </div>
+      </div>
     </div>
   );
 }
