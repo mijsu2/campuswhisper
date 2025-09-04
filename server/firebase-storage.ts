@@ -83,7 +83,7 @@ export class FirebaseStorage implements IStorage {
     try {
       const user = await this.getUserByUsername(username);
       if (!user) return null;
-      
+
       const isValid = await bcrypt.compare(password, user.password);
       return isValid ? user : null;
     } catch (error) {
@@ -124,7 +124,7 @@ export class FirebaseStorage implements IStorage {
       const id = randomUUID();
       const referenceId = `REF-2024-${String(this.complaintCounter++).padStart(4, '0')}`;
       const now = new Date();
-      
+
       const complaint: Complaint = {
         ...insertComplaint,
         id,
@@ -138,7 +138,7 @@ export class FirebaseStorage implements IStorage {
         priority: insertComplaint.priority || "medium",
         contactEmail: insertComplaint.contactEmail || null,
       };
-      
+
       const docRef = doc(db, 'complaints', id);
       await setDoc(docRef, complaint);
       return complaint;
@@ -176,7 +176,7 @@ export class FirebaseStorage implements IStorage {
     try {
       const docRef = doc(db, 'complaints', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (!docSnap.exists()) return undefined;
 
       const updateData: any = {
@@ -193,7 +193,7 @@ export class FirebaseStorage implements IStorage {
       }
 
       await updateDoc(docRef, updateData);
-      
+
       const updatedDoc = await getDoc(docRef);
       return { id: updatedDoc.id, ...updatedDoc.data() } as Complaint;
     } catch (error) {
@@ -229,17 +229,19 @@ export class FirebaseStorage implements IStorage {
   async createSuggestion(insertSuggestion: InsertSuggestion): Promise<Suggestion> {
     try {
       const id = randomUUID();
+      const referenceId = this.generateReferenceId();
       const now = new Date();
-      
+
       const suggestion: Suggestion = {
         ...insertSuggestion,
         id,
+        referenceId,
         status: "pending",
         createdAt: now,
         updatedAt: now,
         benefits: insertSuggestion.benefits || null,
       };
-      
+
       const docRef = doc(db, 'suggestions', id);
       await setDoc(docRef, suggestion);
       return suggestion;
@@ -265,14 +267,14 @@ export class FirebaseStorage implements IStorage {
     try {
       const docRef = doc(db, 'suggestions', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (!docSnap.exists()) return undefined;
 
       await updateDoc(docRef, {
         status,
         updatedAt: new Date(),
       });
-      
+
       const updatedDoc = await getDoc(docRef);
       return { id: updatedDoc.id, ...updatedDoc.data() } as Suggestion;
     } catch (error) {
@@ -292,7 +294,7 @@ export class FirebaseStorage implements IStorage {
       const complaintsRef = collection(db, 'complaints');
       const snapshot = await getDocs(complaintsRef);
       const complaints = snapshot.docs.map(doc => doc.data());
-      
+
       const stats = {
         total: complaints.length,
         pending: complaints.filter((c: any) => c.status === "pending").length,
@@ -317,5 +319,9 @@ export class FirebaseStorage implements IStorage {
         byCategory: {},
       };
     }
+  }
+
+  private generateReferenceId(): string {
+    return `SUG-${String(this.complaintCounter++).padStart(4, '0')}`;
   }
 }

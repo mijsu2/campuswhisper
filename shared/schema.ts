@@ -27,6 +27,7 @@ export const complaints = pgTable("complaints", {
 
 export const suggestions = pgTable("suggestions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  referenceId: text("reference_id").notNull().unique(),
   title: text("title").notNull(),
   type: text("type").notNull(),
   description: text("description").notNull(),
@@ -49,11 +50,12 @@ export const insertComplaintSchema = createInsertSchema(complaints).pick({
   contactEmail: true,
 });
 
-export const insertSuggestionSchema = createInsertSchema(suggestions).pick({
-  title: true,
-  type: true,
-  description: true,
-  benefits: true,
+export const insertSuggestionSchema = createInsertSchema(suggestions).omit({
+  id: true,
+  referenceId: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
