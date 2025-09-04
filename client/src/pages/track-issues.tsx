@@ -32,33 +32,33 @@ export default function TrackIssues() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900" data-testid="track-issues-page">
-      <div className="page-container py-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-indigo-800 dark:from-white dark:via-blue-200 dark:to-indigo-300 bg-clip-text text-transparent mb-3">
+      <div className="page-container py-6 sm:py-8">
+        <div className="mb-6 sm:mb-8 text-center px-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-indigo-800 dark:from-white dark:via-blue-200 dark:to-indigo-300 bg-clip-text text-transparent mb-2 sm:mb-3 leading-tight">
             Track Submissions
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
             Monitor the status of your reported issues and suggestions with real-time updates
           </p>
         </div>
 
         {/* Search and Filters */}
-        <Card className="mb-8 shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-          <CardContent className="p-8">
-            <div className="flex flex-col lg:flex-row gap-6">
+        <Card className="mb-6 sm:mb-8 shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm mx-4">
+          <CardContent className="p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
               <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 sm:h-5 sm:w-5" />
                 <Input
                   placeholder="Search by reference ID, subject, or keywords..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 h-12 text-base border-2 border-muted focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                  className="pl-10 sm:pl-12 h-10 sm:h-12 text-sm sm:text-base border-2 border-muted focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
                   data-testid="input-search"
                 />
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-3">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-52 h-12 border-2 border-muted focus:border-blue-500" data-testid="select-status-filter">
+                  <SelectTrigger className="w-full sm:w-48 lg:w-52 h-10 sm:h-12 border-2 border-muted focus:border-blue-500 text-sm sm:text-base" data-testid="select-status-filter">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
@@ -71,7 +71,7 @@ export default function TrackIssues() {
                   </SelectContent>
                 </Select>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-full sm:w-52 h-12 border-2 border-muted focus:border-blue-500" data-testid="select-category-filter">
+                  <SelectTrigger className="w-full sm:w-48 lg:w-52 h-10 sm:h-12 border-2 border-muted focus:border-blue-500 text-sm sm:text-base" data-testid="select-category-filter">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
@@ -89,7 +89,7 @@ export default function TrackIssues() {
         </Card>
 
         {/* Issues List with Scrollbar */}
-        <div className="max-h-[70vh] overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+        <div className="max-h-[70vh] overflow-y-auto space-y-4 sm:space-y-6 px-4 pr-2 sm:pr-2 custom-scrollbar">
           {isLoading ? (
             <div className="space-y-6">
               {[...Array(3)].map((_, i) => (

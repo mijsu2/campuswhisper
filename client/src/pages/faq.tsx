@@ -79,58 +79,58 @@ export default function FAQ() {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10 dark:from-purple-400/5 dark:to-blue-400/5"></div>
-        <div className="relative page-container py-12">
-          <div className="text-center max-w-4xl mx-auto mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-purple-100 dark:bg-purple-900/30 rounded-full text-purple-700 dark:text-purple-300 text-sm font-medium mb-6 shadow-sm">
-              <HelpCircle className="w-4 h-4 mr-2" />
+        <div className="relative page-container py-8 sm:py-12">
+          <div className="text-center max-w-4xl mx-auto mb-6 sm:mb-8 px-4">
+            <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-purple-100 dark:bg-purple-900/30 rounded-full text-purple-700 dark:text-purple-300 text-xs sm:text-sm font-medium mb-4 sm:mb-6 shadow-sm">
+              <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
               Help & Support Center
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-blue-800 dark:from-white dark:via-purple-200 dark:to-blue-300 bg-clip-text text-transparent mb-4">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-blue-800 dark:from-white dark:via-purple-200 dark:to-blue-300 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
               Frequently Asked Questions
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
               Find answers to common questions about our anonymous complaint system and how to use it effectively.
             </p>
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12 max-w-4xl mx-auto px-4">
             <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-4 text-center">
-                <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <MessageCircle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="bg-blue-100 dark:bg-blue-900/30 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <p className="text-lg font-bold text-foreground">500+</p>
+                <p className="text-base sm:text-lg font-bold text-foreground">500+</p>
                 <p className="text-xs text-muted-foreground">Questions Answered</p>
               </CardContent>
             </Card>
 
             <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-4 text-center">
-                <div className="bg-green-100 dark:bg-green-900/30 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Clock className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="bg-green-100 dark:bg-green-900/30 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <p className="text-lg font-bold text-foreground">24/7</p>
+                <p className="text-base sm:text-lg font-bold text-foreground">24/7</p>
                 <p className="text-xs text-muted-foreground">Support Available</p>
               </CardContent>
             </Card>
 
             <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-4 text-center">
-                <div className="bg-purple-100 dark:bg-purple-900/30 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="bg-purple-100 dark:bg-purple-900/30 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600 dark:text-purple-400" />
                 </div>
-                <p className="text-lg font-bold text-foreground">98%</p>
+                <p className="text-base sm:text-lg font-bold text-foreground">98%</p>
                 <p className="text-xs text-muted-foreground">Satisfaction Rate</p>
               </CardContent>
             </Card>
 
             <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-4 text-center">
-                <div className="bg-amber-100 dark:bg-amber-900/30 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Shield className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="bg-amber-100 dark:bg-amber-900/30 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <p className="text-lg font-bold text-foreground">100%</p>
+                <p className="text-base sm:text-lg font-bold text-foreground">100%</p>
                 <p className="text-xs text-muted-foreground">Anonymous</p>
               </CardContent>
             </Card>
@@ -138,29 +138,29 @@ export default function FAQ() {
         </div>
       </div>
 
-      <div className="page-container pb-12 -mt-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="page-container pb-8 sm:pb-12 -mt-6 sm:-mt-8">
+        <div className="max-w-4xl mx-auto px-4">
           {/* Search and Filters */}
-          <Card className="mb-8 border-0 shadow-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md">
-            <CardContent className="p-6">
+          <Card className="mb-6 sm:mb-8 border-0 shadow-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col lg:flex-row gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                  <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 sm:h-5 sm:w-5" />
                   <Input
                     placeholder="Search for answers..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 h-12 border-2 border-muted focus:border-purple-500 dark:focus:border-purple-400 transition-colors rounded-xl"
+                    className="pl-10 sm:pl-12 h-10 sm:h-12 border-2 border-muted focus:border-purple-500 dark:focus:border-purple-400 transition-colors rounded-xl text-sm sm:text-base"
                   />
                 </div>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-1.5 sm:gap-2 flex-wrap">
                   {categories.map((category) => (
                     <Button
                       key={category}
                       variant={selectedCategory === category ? "default" : "outline"}
                       size="sm"
                       onClick={() => setSelectedCategory(category)}
-                      className="rounded-full"
+                      className="rounded-full text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
                     >
                       {category}
                     </Button>
