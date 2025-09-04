@@ -176,9 +176,6 @@ export default function AnonymousFeedbackTicker() {
             <div className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
           </div>
           <span>Live Feedback Ticker</span>
-          <Badge variant="secondary" className="text-xs">
-            {feedbackItems.length} active
-          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6 pb-4 pt-0 h-[450px]">
