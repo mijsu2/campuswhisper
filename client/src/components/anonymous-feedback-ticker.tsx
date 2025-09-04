@@ -25,12 +25,12 @@ export default function AnonymousFeedbackTicker() {
   const fetchFeedback = async () => {
     try {
       const [complaintsResponse, suggestionsResponse] = await Promise.all([
-        apiRequest("/api/complaints"),
-        apiRequest("/api/suggestions")
+        apiRequest("GET", "/api/complaints"),
+        apiRequest("GET", "/api/suggestions")
       ]);
 
-      const complaints = complaintsResponse || [];
-      const suggestions = suggestionsResponse || [];
+      const complaints = await complaintsResponse.json() || [];
+      const suggestions = await suggestionsResponse.json() || [];
 
       const formatItems = (items: any[], type: 'complaint' | 'suggestion') => {
         return items.map((item: any) => ({
