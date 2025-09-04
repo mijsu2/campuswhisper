@@ -1,0 +1,87 @@
+Hi, I need your help in building an Anonymous Complaint Website that will be used by students, faculty, and staff members. The platform should be built with React for the frontend and use Tailwind CSS for the styling. I'm looking for a modern, advanced UI that is both intuitive and clean, with a focus on accessibility and ease of navigation. Here's a detailed breakdown of the required features:
+
+1. Anonymous Submission System:
+
+UI: A clean, simple form for submitting complaints and feedback anonymously. Add an optional field for contact information if users want a follow-up.
+
+Design: Use floating labels and input fields for a smooth UX, styled using Tailwind's form components.
+
+Focus: Ensure the submission form feels lightweight and doesn’t overwhelm the user.
+
+2. Categories Section:
+
+UI: Dropdown or card-style design for the different categories (Academics, Facilities, Student Discipline, Teachers & Staff, Clubs & Activities).
+
+Design: Use icons to represent each category and hover effects to make the UI interactive.
+
+Tailwind Styling: Use grid layouts for responsiveness.
+
+3. Admin Dashboard (Restricted Access):
+
+UI: A secure admin panel that allows authorized users to view and monitor complaints.
+
+Features: Include tables and panels for viewing submitted reports, categorizing concerns, and assigning them to the relevant department.
+
+Design: Use sidebars with dropdowns for easy navigation, and cards for the list of issues.
+
+Graphical Visualization: Use Chart.js or similar libraries for displaying complaint data (bar graphs, pie charts) to visualize the most frequent concerns.
+
+4. Graphical Data Visualization:
+
+UI: Interactive charts (bar or pie graphs) for admins to see complaint frequencies per category.
+
+Design: The graphs should be integrated into the dashboard, with Tailwind’s container and flex layouts to position them neatly.
+
+Look & Feel: Make sure the graphs have hover effects and tooltips for better interactivity.
+
+5. Suggestion Panel:
+
+UI: Add a section for users to submit positive suggestions, ideas, or proposals. This should be a separate form but with a similar structure to the complaints form.
+
+Design: Use modals or expandable sections to keep the page clean and organized.
+
+6. FAQs Page:
+
+UI: A dropdown accordion-style list for frequently asked questions, each question should expand upon click.
+
+Design: Use collapsible panels for each FAQ and style it with Tailwind’s utility classes for spacing, padding, and hover effects.
+
+7. Issue/Concern Monitor:
+
+UI: A public table that displays the status of submitted issues (Pending, Under Review, Resolved).
+
+Design: Use card-style layouts for a clean presentation, with each issue shown in a collapsible or expandable row for detailed status.
+
+Status Icons: Use color-coding (red for pending, yellow for under review, green for resolved) for easy recognition.
+
+8. Resolved Complaints Section:
+
+UI: A separate page or section that lists resolved complaints, allowing users to see the action taken.
+
+Design: Use a scrollable list or table layout for a neat, organized presentation.
+
+9. Simple, Mobile-Friendly Design:
+
+UI: Ensure the entire platform is mobile-responsive with easy navigation.
+
+Design: Use Tailwind's mobile-first design philosophy, with flexbox and grid layouts to ensure it looks great on all screen sizes.
+
+Icons: Add scalable icons for better touch interaction.
+
+10. Security & Confidentiality Notice:
+
+UI: A visible reminder or banner placed at the top or bottom of the page.
+
+Design: Use light design elements like a translucent background with bold text to keep it visible but not intrusive.
+
+General UI Design Notes:
+
+Modern Aesthetic: Use rounded corners, shadows, and soft color schemes (like pastel blues, whites, and greys) for a fresh and calming look.
+
+Interactive Components: Add hover effects, transitions, and animations to enhance the overall user experience.
+
+Typography: Choose modern fonts (e.g., Inter, Roboto) with appropriate font weights for readability.
+
+Accessibility: Ensure the design is highly accessible with proper contrast, readable fonts, and keyboard navigability.
+
+Please build the components to be reusable and modular, so they can be easily updated in the future.

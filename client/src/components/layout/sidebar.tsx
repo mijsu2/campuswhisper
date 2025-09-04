@@ -18,7 +18,6 @@ const navigation = [
   { name: "Track Issues", href: "/track", icon: Search },
   { name: "Resolved Cases", href: "/resolved", icon: CheckCircle },
   { name: "FAQ", href: "/faq", icon: HelpCircle },
-  { name: "Admin Panel", href: "/admin", icon: Settings },
 ];
 
 export default function Sidebar() {

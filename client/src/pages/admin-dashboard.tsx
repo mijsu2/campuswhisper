@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useAuth } from "@/contexts/auth-context";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/stats-card";
@@ -16,7 +17,8 @@ import {
   TrendingUp, 
   Download,
   Eye,
-  CheckCircle2
+  CheckCircle2,
+  LogOut
 } from "lucide-react";
 import { format } from "date-fns";
 import { Complaint } from "@shared/schema";
@@ -33,6 +35,15 @@ interface StatsData {
 export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+  };
 
   const { data: stats, isLoading: statsLoading } = useQuery<StatsData>({
     queryKey: ["/api/stats"],
@@ -118,9 +129,19 @@ export default function AdminDashboard() {
 
   return (
     <div className="p-8" data-testid="admin-dashboard-page">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Manage and monitor all submissions</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+          <p className="text-muted-foreground">Manage and monitor all submissions</p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={handleLogout}
+          data-testid="button-logout"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Logout
+        </Button>
       </div>
 
       {/* Admin Stats */}
