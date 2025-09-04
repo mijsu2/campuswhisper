@@ -84,7 +84,7 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Categories Overview */}
+      {/* Categories Overview and Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2">
           <Card>
@@ -117,7 +117,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <div>
+        <div className="space-y-8">
           <Card>
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
@@ -145,27 +145,23 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+          
+          <AnonymousFeedbackTicker />
         </div>
       </div>
 
-      {/* Category Chart and Live Feedback Ticker */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 items-start">
-        <div className="lg:col-span-2">
-          {stats && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Submissions by Category</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CategoryChart data={stats.byCategory} />
-              </CardContent>
-            </Card>
-          )}
-        </div>
-        
-        <div className="self-start">
-          <AnonymousFeedbackTicker />
-        </div>
+      {/* Category Chart */}
+      <div className="mb-8">
+        {stats && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Submissions by Category</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CategoryChart data={stats.byCategory} />
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
