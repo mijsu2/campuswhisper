@@ -36,9 +36,12 @@ export default function IssueCard({ complaint, showAdminActions = false, onStatu
               Submitted on {(() => {
                 if (!complaint.createdAt) return "Unknown date";
                 try {
-                  // Handle Firestore Timestamp objects
                   let date;
-                  if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'toDate' in complaint.createdAt) {
+                  // Handle Firestore timestamp objects with seconds/nanoseconds
+                  if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'seconds' in complaint.createdAt) {
+                    const timestamp = complaint.createdAt as any;
+                    date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                  } else if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'toDate' in complaint.createdAt) {
                     date = (complaint.createdAt as any).toDate();
                   } else {
                     date = new Date(complaint.createdAt);
@@ -68,9 +71,12 @@ export default function IssueCard({ complaint, showAdminActions = false, onStatu
                 Submitted on {(() => {
                   if (!complaint.createdAt) return "Unknown date";
                   try {
-                    // Handle Firestore Timestamp objects
                     let date;
-                    if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'toDate' in complaint.createdAt) {
+                    // Handle Firestore timestamp objects with seconds/nanoseconds
+                    if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'seconds' in complaint.createdAt) {
+                      const timestamp = complaint.createdAt as any;
+                      date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                    } else if (complaint.createdAt && typeof complaint.createdAt === 'object' && 'toDate' in complaint.createdAt) {
                       date = (complaint.createdAt as any).toDate();
                     } else {
                       date = new Date(complaint.createdAt);
