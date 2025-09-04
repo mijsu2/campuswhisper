@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import StatsCard from "@/components/stats-card";
 import CategoryChart from "@/components/charts/category-chart";
+import AnonymousFeedbackTicker from "@/components/anonymous-feedback-ticker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
@@ -147,17 +148,25 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Category Chart */}
-      {stats && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Submissions by Category</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CategoryChart data={stats.byCategory} />
-          </CardContent>
-        </Card>
-      )}
+      {/* Category Chart and Live Feedback Ticker */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="lg:col-span-2">
+          {stats && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Submissions by Category</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CategoryChart data={stats.byCategory} />
+              </CardContent>
+            </Card>
+          )}
+        </div>
+        
+        <div>
+          <AnonymousFeedbackTicker />
+        </div>
+      </div>
     </div>
   );
 }
