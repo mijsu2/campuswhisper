@@ -93,7 +93,7 @@ export default function AnonymousFeedbackTicker() {
 
   if (isLoading) {
     return (
-      <Card className="h-[300px]">
+      <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <div className="animate-pulse h-4 w-4 bg-muted rounded"></div>
@@ -113,7 +113,7 @@ export default function AnonymousFeedbackTicker() {
 
   if (feedbackItems.length === 0) {
     return (
-      <Card className="h-[400px]">
+      <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <MessageSquare className="h-4 w-4 text-blue-600" />
@@ -131,7 +131,7 @@ export default function AnonymousFeedbackTicker() {
   }
 
   return (
-    <Card className="h-[400px] relative overflow-hidden">
+    <Card className="h-full relative overflow-hidden">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <div className="relative">
@@ -145,7 +145,7 @@ export default function AnonymousFeedbackTicker() {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="space-y-3 max-h-64 overflow-y-auto">
+        <div className="space-y-3">
           {feedbackItems.slice(0, 5).map((item, index) => (
             <div
               key={item.id}
