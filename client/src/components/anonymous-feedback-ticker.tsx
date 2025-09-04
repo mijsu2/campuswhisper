@@ -19,6 +19,7 @@ interface FeedbackItem {
 export default function AnonymousFeedbackTicker() {
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchFeedback = async () => {
@@ -36,7 +37,7 @@ export default function AnonymousFeedbackTicker() {
           id: item.id,
           type,
           category: type === 'complaint' ? (item.category || 'General') : (item.type || 'General'),
-          preview: item.description || item.subject || `Anonymous ${type} submitted`,
+          preview: item.description?.substring(0, 50) + (item.description?.length > 50 ? '...' : '') || `Anonymous ${type} submitted`,
           timeAgo: getTimeAgo(item.createdAt),
           referenceId: item.referenceId || 'N/A',
           createdAt: item.createdAt
@@ -50,7 +51,7 @@ export default function AnonymousFeedbackTicker() {
         const dateA = new Date(a.createdAt).getTime();
         const dateB = new Date(b.createdAt).getTime();
         return dateB - dateA; // Most recent first
-      });
+      }).slice(0, 10); // Show only last 10 items
 
       setFeedbackItems(allItems);
       setIsLoading(false);
@@ -90,19 +91,26 @@ export default function AnonymousFeedbackTicker() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-rotate through items
   useEffect(() => {
-    if (feedbackItems.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % feedbackItems.length);
-      }, 4000); // Change every 4 seconds
-      return () => clearInterval(interval);
-    }
+    if (feedbackItems.length === 0) return;
+
+    const interval = setInterval(() => {
+      setIsVisible(false);
+      
+      setTimeout(() => {
+        setCurrentIndex((prevIndex) => 
+          prevIndex === feedbackItems.length - 1 ? 0 : prevIndex + 1
+        );
+        setIsVisible(true);
+      }, 300); // Half of transition duration
+    }, 4000); // Change every 4 seconds
+
+    return () => clearInterval(interval);
   }, [feedbackItems.length]);
 
   if (isLoading) {
     return (
-      <Card className="h-full">
+      <Card className="h-[300px]">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <div className="animate-pulse h-4 w-4 bg-muted rounded"></div>
@@ -122,7 +130,7 @@ export default function AnonymousFeedbackTicker() {
 
   if (feedbackItems.length === 0) {
     return (
-      <Card className="h-full">
+      <Card className="h-[300px]">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <MessageSquare className="h-4 w-4 text-blue-600" />
@@ -142,7 +150,7 @@ export default function AnonymousFeedbackTicker() {
   const currentItem = feedbackItems[currentIndex];
 
   return (
-    <Card className="h-full relative overflow-hidden">
+    <Card className="h-[300px] relative overflow-hidden">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <div className="relative">
@@ -151,28 +159,30 @@ export default function AnonymousFeedbackTicker() {
           </div>
           <span>Live Feedback Ticker</span>
           <Badge variant="secondary" className="text-xs">
-            {feedbackItems.length} recent submissions
+            {currentIndex + 1} of {feedbackItems.length}
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <div className="relative h-64">
-          <div
-            key={currentIndex}
-            className="absolute inset-0 transition-all duration-500 ease-in-out animate-in fade-in slide-in-from-right-4"
-          >
-            <div className="flex flex-col h-full justify-between space-y-6">
+      <CardContent className="relative h-48">
+        <div
+          className={cn(
+            "transition-all duration-600 ease-in-out absolute inset-0 p-4",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          )}
+        >
+          {currentItem && (
+            <div className="space-y-4">
               {/* Header with type and category */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   {currentItem.type === 'complaint' ? (
-                    <MessageSquare className="h-4 w-4 text-red-500" />
+                    <MessageSquare className="h-5 w-5 text-red-500" />
                   ) : (
-                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                    <Lightbulb className="h-5 w-5 text-yellow-500" />
                   )}
                   <Badge 
                     variant={currentItem.type === 'complaint' ? 'destructive' : 'default'}
-                    className="capitalize text-xs"
+                    className="capitalize"
                   >
                     {currentItem.type}
                   </Badge>
@@ -186,15 +196,6 @@ export default function AnonymousFeedbackTicker() {
                 </div>
               </div>
 
-              {/* Content Preview */}
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-center space-y-3 w-full">
-                  <p className="text-sm text-muted-foreground leading-relaxed px-4">
-                    {currentItem.preview}
-                  </p>
-                </div>
-              </div>
-
               {/* Anonymous User and Reference ID */}
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2">
@@ -202,27 +203,36 @@ export default function AnonymousFeedbackTicker() {
                   <span className="text-muted-foreground font-medium">Anonymous user</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Hash className="h-3 w-3 text-muted-foreground" />
-                  <span className="font-mono text-xs text-muted-foreground">
+                  <Hash className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-mono text-muted-foreground">
                     {currentItem.referenceId}
                   </span>
                 </div>
               </div>
 
+              
+
               {/* Progress indicator */}
-              <div className="flex space-x-1 justify-center">
-                {feedbackItems.slice(0, 5).map((_, index) => (
+              <div className="flex space-x-1 justify-center mt-4">
+                {feedbackItems.slice(0, 8).map((_, index) => (
                   <div
                     key={index}
                     className={cn(
-                      "h-1.5 rounded-full transition-all duration-300",
-                      index === (currentIndex % 5) ? "w-6 bg-primary" : "w-1.5 bg-muted"
+                      "h-1.5 w-1.5 rounded-full transition-all duration-300",
+                      index === currentIndex 
+                        ? "bg-primary w-6" 
+                        : "bg-muted-foreground/30"
                     )}
                   />
                 ))}
+                {feedbackItems.length > 8 && (
+                  <div className="text-xs text-muted-foreground ml-2">
+                    +{feedbackItems.length - 8}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </CardContent>
     </Card>
