@@ -15,7 +15,7 @@ import AdminDashboard from "@/pages/admin-dashboard";
 import AdminComplaints from "@/pages/admin-complaints";
 import AdminSuggestions from "@/pages/admin-suggestions";
 import AdminAnalytics from "@/pages/admin-analytics";
-import AdminUsers from "@/pages/admin-users";
+
 import NotFound from "@/pages/not-found";
 import Topbar from "@/components/layout/topbar";
 import SecurityBanner from "@/components/layout/security-banner";
@@ -45,8 +45,6 @@ function Router() {
               </Route>
               <Route path="/admin/complaints" component={AdminComplaints} />
               <Route path="/admin/suggestions" component={AdminSuggestions} />
-              
-              <Route path="/admin/users" component={AdminUsers} />
               <Route component={NotFound} />
             </Switch>
           </main>

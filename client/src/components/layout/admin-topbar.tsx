@@ -12,7 +12,6 @@ import {
   FileText, 
   Lightbulb,
   BarChart3,
-  Users,
   Settings,
   LogOut,
   Menu,
@@ -24,11 +23,10 @@ const adminNavigation = [
   { name: "All Complaints", href: "/admin/complaints", icon: FileText },
   { name: "Suggestions", href: "/admin/suggestions", icon: Lightbulb },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { name: "Users", href: "/admin/users", icon: Users },
 ];
 
 export default function AdminTopbar() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { logout, user } = useAuth();
   const { toast } = useToast();
@@ -39,6 +37,7 @@ export default function AdminTopbar() {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    setLocation("/admin/login");
   };
 
   return (
