@@ -21,6 +21,7 @@ export default function AnonymousFeedbackTicker() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [animationKey, setAnimationKey] = useState(0);
 
   const fetchFeedback = async () => {
     try {
@@ -37,7 +38,7 @@ export default function AnonymousFeedbackTicker() {
           id: item.id,
           type,
           category: type === 'complaint' ? (item.category || 'General') : (item.type || 'General'),
-          preview: `New anonymous ${type} submitted`,
+          preview: `Anonymous ${type}`,
           timeAgo: getTimeAgo(item.createdAt),
           referenceId: item.referenceId || 'N/A',
           createdAt: item.createdAt
@@ -91,6 +92,22 @@ export default function AnonymousFeedbackTicker() {
     return () => clearInterval(interval);
   }, []);
 
+  // Cycling animation effect
+  useEffect(() => {
+    if (feedbackItems.length <= 3) return;
+
+    const interval = setInterval(() => {
+      setIsVisible(false);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 3) % feedbackItems.length);
+        setAnimationKey(prev => prev + 1);
+        setIsVisible(true);
+      }, 300);
+    }, 4000); // Change every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [feedbackItems.length]);
+
   // Auto-refresh effect for new feedback
   useEffect(() => {
     if (feedbackItems.length === 0) return;
@@ -143,8 +160,12 @@ export default function AnonymousFeedbackTicker() {
 
   const currentItem = feedbackItems[currentIndex];
 
-  // Get 3 items to display
-  const displayItems = feedbackItems.slice(0, 3);
+  // Get 3 items to display with cycling
+  const displayItems = feedbackItems.length <= 3 
+    ? feedbackItems 
+    : feedbackItems.slice(currentIndex, currentIndex + 3).concat(
+        feedbackItems.slice(0, Math.max(0, (currentIndex + 3) - feedbackItems.length))
+      );
 
   return (
     <Card className="h-[500px] relative overflow-hidden p-0">
@@ -161,15 +182,21 @@ export default function AnonymousFeedbackTicker() {
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6 pb-4 pt-0 h-[450px]">
-        <div className="space-y-4 h-full overflow-y-auto">
+        <div 
+          key={animationKey}
+          className={cn(
+            "space-y-4 h-full overflow-y-auto transition-opacity duration-300",
+            isVisible ? "opacity-100" : "opacity-0"
+          )}
+        >
           {displayItems.map((item, index) => (
             <div
-              key={item.id}
+              key={`${item.id}-${animationKey}`}
               className={cn(
                 "border rounded-lg p-4 transition-all duration-500 ease-in-out bg-muted/30",
-                "animate-in fade-in slide-in-from-right-4"
+                "animate-in fade-in slide-in-from-bottom-4"
               )}
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ animationDelay: `${index * 150}ms` }}
             >
               {/* Header with type and category */}
               <div className="flex items-center justify-between mb-3">
