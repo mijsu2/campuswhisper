@@ -43,7 +43,7 @@ export default function AnonymousFeedbackTicker() {
       id: complaint.id,
       type: 'complaint' as const,
       category: complaint.category || 'General',
-      preview: complaint.title?.substring(0, 60) + (complaint.title?.length > 60 ? '...' : '') || 'Anonymous complaint submitted',
+      preview: complaint.description?.substring(0, 60) + (complaint.description?.length > 60 ? '...' : '') || 'Anonymous complaint submitted',
       timeAgo: getTimeAgo(complaint.createdAt),
       createdAt: complaint.createdAt
     })),
@@ -51,7 +51,7 @@ export default function AnonymousFeedbackTicker() {
       id: suggestion.id,
       type: 'suggestion' as const,
       category: suggestion.type || 'General',
-      preview: suggestion.title?.substring(0, 60) + (suggestion.title?.length > 60 ? '...' : '') || 'Anonymous suggestion submitted',
+      preview: suggestion.description?.substring(0, 60) + (suggestion.description?.length > 60 ? '...' : '') || 'Anonymous suggestion submitted',
       timeAgo: getTimeAgo(suggestion.createdAt),
       createdAt: suggestion.createdAt
     }))
