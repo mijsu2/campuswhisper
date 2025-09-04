@@ -96,13 +96,15 @@ export default function AdminDashboard() {
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
       
       const monthSubmissions = complaints.filter(c => {
-        const createdDate = new Date(c.createdAt!);
-        return createdDate >= monthStart && createdDate <= monthEnd;
+        if (!c.createdAt) return false;
+        const createdDate = new Date(c.createdAt);
+        return !isNaN(createdDate.getTime()) && createdDate >= monthStart && createdDate <= monthEnd;
       }).length;
       
       const monthResolved = complaints.filter(c => {
-        const resolvedDate = c.resolvedAt ? new Date(c.resolvedAt) : null;
-        return resolvedDate && resolvedDate >= monthStart && resolvedDate <= monthEnd;
+        if (!c.resolvedAt) return false;
+        const resolvedDate = new Date(c.resolvedAt);
+        return !isNaN(resolvedDate.getTime()) && resolvedDate >= monthStart && resolvedDate <= monthEnd;
       }).length;
       
       monthlySubmissions.push(monthSubmissions);
@@ -121,8 +123,10 @@ export default function AdminDashboard() {
   const resolvedComplaints = complaints.filter(c => c.status === "resolved");
   const avgResolutionTime = resolvedComplaints.length > 0 
     ? (resolvedComplaints.reduce((acc: number, complaint) => {
-        const created = new Date(complaint.createdAt!);
-        const resolved = new Date(complaint.resolvedAt!);
+        if (!complaint.createdAt || !complaint.resolvedAt) return acc;
+        const created = new Date(complaint.createdAt);
+        const resolved = new Date(complaint.resolvedAt);
+        if (isNaN(created.getTime()) || isNaN(resolved.getTime())) return acc;
         return acc + (resolved.getTime() - created.getTime());
       }, 0) / resolvedComplaints.length / (1000 * 60 * 60 * 24)).toFixed(1)
     : "0";
@@ -286,7 +290,7 @@ export default function AdminDashboard() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {format(new Date(complaint.createdAt!), "MMM dd, HH:mm")}
+                          {complaint.createdAt ? format(new Date(complaint.createdAt), "MMM dd, HH:mm") : "Unknown"}
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">

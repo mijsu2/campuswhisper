@@ -32,7 +32,15 @@ export default function IssueCard({ complaint, showAdminActions = false, onStatu
               Reference ID: <span className="font-mono font-medium">{complaint.referenceId}</span>
             </p>
             <p className="text-sm text-muted-foreground">
-              Submitted on {format(new Date(complaint.createdAt!), "MMM dd, yyyy")} • Category: {category?.name}
+              Submitted on {(() => {
+                if (!complaint.createdAt) return "Unknown date";
+                try {
+                  const date = new Date(complaint.createdAt);
+                  return !isNaN(date.getTime()) ? format(date, "MMM dd, yyyy") : "Unknown date";
+                } catch {
+                  return "Unknown date";
+                }
+              })()} • Category: {category?.name}
             </p>
           </div>
           <CollapsibleTrigger asChild>

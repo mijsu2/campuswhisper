@@ -58,7 +58,7 @@ export default function ResolvedCases() {
                     {complaint.resolution || "Resolution details available upon request."}
                   </p>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Resolved: {format(new Date(complaint.resolvedAt!), "MMM dd, yyyy")}</span>
+                    <span>Resolved: {complaint.resolvedAt ? format(new Date(complaint.resolvedAt), "MMM dd, yyyy") : "Unknown"}</span>
                     <span>Category: {category?.name}</span>
                   </div>
                 </CardContent>
@@ -115,7 +115,10 @@ export default function ResolvedCases() {
                           </div>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {complaint.resolvedAt ? format(new Date(complaint.resolvedAt), "MMM dd, yyyy") : "N/A"}
+                          {complaint.resolvedAt ? (() => {
+                            const date = new Date(complaint.resolvedAt);
+                            return !isNaN(date.getTime()) ? format(date, "MMM dd, yyyy") : "N/A";
+                          })() : "N/A"}
                         </TableCell>
                         <TableCell>
                           <Button
