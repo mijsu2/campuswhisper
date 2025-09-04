@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -89,14 +88,14 @@ export default function AdminDashboard() {
     const labels = [];
     const complaintsData = [];
     const suggestionsData = [];
-    
+
     for (let i = months - 1; i >= 0; i--) {
       const date = subMonths(new Date(), i);
       labels.push(format(date, 'MMM yyyy'));
-      
+
       const monthStart = startOfMonth(date);
       const monthEnd = endOfMonth(date);
-      
+
       // Count complaints for this month
       const monthComplaints = complaints.filter(c => {
         if (!c.createdAt) return false;
@@ -113,7 +112,7 @@ export default function AdminDashboard() {
           return false;
         }
       }).length;
-      
+
       // Count suggestions for this month
       const monthSuggestions = suggestions.filter(s => {
         if (!s.createdAt) return false;
@@ -130,11 +129,11 @@ export default function AdminDashboard() {
           return false;
         }
       }).length;
-      
+
       complaintsData.push(monthComplaints);
       suggestionsData.push(monthSuggestions);
     }
-    
+
     return { labels, complaintsData, suggestionsData };
   };
 
@@ -253,7 +252,7 @@ export default function AdminDashboard() {
       `}</style>
       <div className="min-h-screen bg-background" data-testid="admin-dashboard">
         <AdminTopbar />
-      
+
         <div className="p-6">
           {/* Header */}
           <div className="mb-8">
@@ -547,7 +546,7 @@ export default function AdminDashboard() {
                       {recentComplaints.map((complaint) => {
                         const category = CATEGORIES.find(c => c.id === complaint.category);
                         const statusInfo = STATUS_OPTIONS.find(s => s.id === complaint.status);
-                        
+
                         return (
                           <TableRow 
                             key={complaint.id} 
