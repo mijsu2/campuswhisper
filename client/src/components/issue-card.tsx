@@ -88,6 +88,10 @@ export default function IssueCard({ complaint, showAdminActions = false, onStatu
                 <Button
                   size="sm"
                   variant="ghost"
+                  onClick={() => {
+                    const element = document.querySelector(`[data-testid="issue-card-${complaint.referenceId}"]`);
+                    element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
                   data-testid={`button-details-${complaint.referenceId}`}
                 >
                   View Details

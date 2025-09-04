@@ -24,8 +24,8 @@ export default function TrackIssues() {
       complaint.referenceId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       complaint.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = statusFilter === "" || complaint.status === statusFilter;
-    const matchesCategory = categoryFilter === "" || complaint.category === categoryFilter;
+    const matchesStatus = statusFilter === "" || statusFilter === "all" || complaint.status === statusFilter;
+    const matchesCategory = categoryFilter === "" || categoryFilter === "all" || complaint.category === categoryFilter;
     
     return matchesSearch && matchesStatus && matchesCategory;
   });
@@ -56,7 +56,7 @@ export default function TrackIssues() {
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 {STATUS_OPTIONS.map((status) => (
                   <SelectItem key={status.id} value={status.id}>
                     {status.name}
@@ -69,7 +69,7 @@ export default function TrackIssues() {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {CATEGORIES.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name}
@@ -112,21 +112,12 @@ export default function TrackIssues() {
         )}
       </div>
 
-      {/* Pagination */}
+      {/* Results Summary */}
       {filteredComplaints.length > 0 && (
-        <div className="flex items-center justify-between mt-8">
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-8">
+          <p className="text-sm text-muted-foreground text-center">
             Showing {filteredComplaints.length} of {complaints.length} results
           </p>
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm" disabled data-testid="button-previous">
-              Previous
-            </Button>
-            <Button size="sm" data-testid="button-page-1">1</Button>
-            <Button variant="outline" size="sm" disabled data-testid="button-next">
-              Next
-            </Button>
-          </div>
         </div>
       )}
     </div>

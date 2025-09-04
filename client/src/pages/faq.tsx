@@ -75,7 +75,10 @@ export default function FAQ() {
             <p className="text-muted-foreground mb-6">
               If you couldn't find the answer you were looking for, feel free to contact our support team.
             </p>
-            <Button data-testid="button-contact-support">
+            <Button 
+              onClick={() => window.location.href = 'mailto:support@campus-voice.edu?subject=Support Request'}
+              data-testid="button-contact-support"
+            >
               <Mail className="mr-2 h-4 w-4" />
               Contact Support
             </Button>

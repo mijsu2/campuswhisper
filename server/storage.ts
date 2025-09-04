@@ -183,4 +183,22 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Conditionally use Firebase or in-memory storage
+let storage: IStorage;
+
+try {
+  // Try to use Firebase if environment variables are set
+  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY) {
+    const { FirebaseStorage } = require('./firebase-storage');
+    storage = new FirebaseStorage();
+    console.log('Using Firebase storage');
+  } else {
+    storage = new MemStorage();
+    console.log('Using in-memory storage (Firebase credentials not found)');
+  }
+} catch (error) {
+  console.error('Error initializing Firebase storage, falling back to in-memory:', error);
+  storage = new MemStorage();
+}
+
+export { storage };

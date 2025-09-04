@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/stats-card";
@@ -68,12 +69,43 @@ export default function AdminDashboard() {
   const underReviewCount = complaints.filter(c => c.status === "under_review").length;
   const highPriorityCount = complaints.filter(c => c.priority === "high" || c.priority === "urgent").length;
 
-  // Mock data for trends chart
-  const trendsData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    submissions: [120, 135, 128, 145, 132, 158],
-    resolved: [115, 130, 125, 140, 128, 152]
+  // Generate real trends data from complaint data
+  const getTrendsData = () => {
+    const last6Months = [];
+    const monthlySubmissions = [];
+    const monthlyResolved = [];
+    
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      last6Months.push(date.toLocaleDateString('en', { month: 'short' }));
+      
+      // Count submissions and resolutions for this month
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      
+      const monthSubmissions = complaints.filter(c => {
+        const createdDate = new Date(c.createdAt!);
+        return createdDate >= monthStart && createdDate <= monthEnd;
+      }).length;
+      
+      const monthResolved = complaints.filter(c => {
+        const resolvedDate = c.resolvedAt ? new Date(c.resolvedAt) : null;
+        return resolvedDate && resolvedDate >= monthStart && resolvedDate <= monthEnd;
+      }).length;
+      
+      monthlySubmissions.push(monthSubmissions);
+      monthlyResolved.push(monthResolved);
+    }
+    
+    return {
+      labels: last6Months,
+      submissions: monthlySubmissions,
+      resolved: monthlyResolved
+    };
   };
+  
+  const trendsData = getTrendsData();
 
   const resolvedComplaints = complaints.filter(c => c.status === "resolved");
   const avgResolutionTime = resolvedComplaints.length > 0 
@@ -168,9 +200,11 @@ export default function AdminDashboard() {
                 <Download className="mr-2 h-4 w-4" />
                 Export Data
               </Button>
-              <Button size="sm" data-testid="button-view-all">
-                View All
-              </Button>
+              <Link href="/track">
+                <Button size="sm" data-testid="button-view-all">
+                  View All
+                </Button>
+              </Link>
             </div>
           </div>
         </CardHeader>
