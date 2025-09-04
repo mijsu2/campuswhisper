@@ -156,12 +156,12 @@ export default function AnonymousFeedbackTicker() {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="relative h-48">
+        <div className="relative h-64">
           <div
             key={currentIndex}
             className="absolute inset-0 transition-all duration-500 ease-in-out animate-in fade-in slide-in-from-right-4"
           >
-            <div className="space-y-4">
+            <div className="flex flex-col h-full justify-between space-y-6">
               {/* Header with type and category */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
@@ -186,6 +186,17 @@ export default function AnonymousFeedbackTicker() {
                 </div>
               </div>
 
+              {/* Content Preview */}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center space-y-3">
+                  <div className="text-sm text-muted-foreground bg-muted/30 rounded-lg p-4">
+                    <p className="leading-relaxed">
+                      {currentItem.preview}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Anonymous User and Reference ID */}
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2">
@@ -201,7 +212,7 @@ export default function AnonymousFeedbackTicker() {
               </div>
 
               {/* Progress indicator */}
-              <div className="flex space-x-1 justify-center mt-8">
+              <div className="flex space-x-1 justify-center">
                 {feedbackItems.slice(0, 5).map((_, index) => (
                   <div
                     key={index}
