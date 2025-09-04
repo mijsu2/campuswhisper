@@ -248,7 +248,6 @@ export default function ResolvedCases() {
                       <TableHead className="font-semibold text-foreground">Category</TableHead>
                       <TableHead className="font-semibold text-foreground">Resolution Summary</TableHead>
                       <TableHead className="font-semibold text-foreground">Completion Date</TableHead>
-                      <TableHead className="font-semibold text-foreground">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -305,17 +304,6 @@ export default function ResolvedCases() {
                                 })()}
                               </span>
                             </div>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30"
-                              data-testid={`button-view-resolution-${complaint.referenceId}`}
-                            >
-                              View Details
-                            </Button>
                           </TableCell>
                         </TableRow>
                       );
