@@ -44,10 +44,10 @@ export const PRIORITY_LEVELS = [
 ] as const;
 
 export const STATUS_OPTIONS = [
-  { id: "pending", name: "Pending", color: "status-pending" },
-  { id: "under_review", name: "Under Review", color: "status-review" },
-  { id: "resolved", name: "Resolved", color: "status-resolved" }
-] as const;
+  { id: "pending", name: "Pending Review", color: "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800" },
+  { id: "under_review", name: "Under Review", color: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800" },
+  { id: "resolved", name: "Resolved", color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800" },
+];
 
 export const SUGGESTION_TYPES = [
   { id: "improvement", name: "Campus Improvement" },

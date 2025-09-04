@@ -574,9 +574,23 @@ export default function AdminDashboard() {
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              <Badge className={statusInfo?.color}>
-                                {statusInfo?.name}
-                              </Badge>
+                              <div className="flex items-center space-x-2">
+                                {(() => {
+                                  switch (complaint.status) {
+                                    case "pending":
+                                      return <Clock className="h-4 w-4" />;
+                                    case "under_review":
+                                      return <Search className="h-4 w-4" />;
+                                    case "resolved":
+                                      return <CheckCircle2 className="h-4 w-4" />;
+                                    default:
+                                      return <AlertTriangle className="h-4 w-4" />;
+                                  }
+                                })()}
+                                <Badge className={statusInfo?.color}>
+                                  {statusInfo?.name}
+                                </Badge>
+                              </div>
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
                               {(() => {
