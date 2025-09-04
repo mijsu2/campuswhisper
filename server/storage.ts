@@ -1,5 +1,6 @@
 import { type User, type InsertUser, type Complaint, type InsertComplaint, type Suggestion, type InsertSuggestion } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { FirebaseStorage } from './firebase-storage';
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -187,14 +188,13 @@ export class MemStorage implements IStorage {
 let storage: IStorage;
 
 try {
-  // Try to use Firebase if environment variables are set
-  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY) {
-    const { FirebaseStorage } = require('./firebase-storage');
+  // Try to use Firebase if API key is available for campuswhispers project
+  if (process.env.GOOGLE_API_KEY) {
     storage = new FirebaseStorage();
-    console.log('Using Firebase storage');
+    console.log('Using Firebase storage for campuswhispers-9edfe');
   } else {
     storage = new MemStorage();
-    console.log('Using in-memory storage (Firebase credentials not found)');
+    console.log('Using in-memory storage (Firebase API key not found)');
   }
 } catch (error) {
   console.error('Error initializing Firebase storage, falling back to in-memory:', error);
