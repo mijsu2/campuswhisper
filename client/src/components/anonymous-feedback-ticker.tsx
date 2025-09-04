@@ -148,8 +148,8 @@ export default function AnonymousFeedbackTicker() {
 
   return (
     <Card className="h-[500px] relative overflow-hidden">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center space-x-2 text-lg">
           <div className="relative">
             <MessageSquare className="h-4 w-4 text-blue-600" />
             <div className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -160,7 +160,7 @@ export default function AnonymousFeedbackTicker() {
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 h-[420px]">
+      <CardContent className="p-4 pt-0 h-[440px]">
         <div className="space-y-4 h-full overflow-y-auto">
           {displayItems.map((item, index) => (
             <div
