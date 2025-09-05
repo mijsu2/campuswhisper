@@ -135,10 +135,10 @@ export default function SuggestionForm() {
           data-testid="textarea-suggestion-benefits"
         />
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <Button
             type="submit"
-            className="flex-1 py-4 font-medium"
+            className="w-full sm:flex-1 py-3 sm:py-4 font-medium"
             disabled={createSuggestionMutation.isPending}
             data-testid="button-submit-suggestion"
           >
@@ -149,7 +149,7 @@ export default function SuggestionForm() {
             type="button"
             variant="outline"
             onClick={clearForm}
-            className="px-6 py-4 font-medium"
+            className="w-full sm:w-auto px-6 py-3 sm:py-4 font-medium"
             data-testid="button-clear-suggestion"
           >
             <RotateCcw className="h-4 w-4 mr-2" />
