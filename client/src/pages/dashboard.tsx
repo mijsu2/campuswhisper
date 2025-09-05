@@ -268,14 +268,13 @@ export default function Dashboard() {
                 </Link>
                 <Link href="/track">
                   <Button 
-                    variant="outline" 
-                    className="w-full justify-start h-12 sm:h-14 border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-3 sm:px-4" 
+                    className="w-full justify-start h-12 sm:h-14 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-3 sm:px-4" 
                     data-testid="quick-action-track"
                   >
                     <Search className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                     <div className="text-left min-w-0">
                       <div className="font-semibold text-sm sm:text-base">Track Submission</div>
-                      <div className="text-xs text-muted-foreground hidden sm:block">Monitor progress</div>
+                      <div className="text-xs text-orange-100 hidden sm:block">Monitor progress</div>
                     </div>
                   </Button>
                 </Link>
