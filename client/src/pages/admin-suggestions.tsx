@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { 
-  Search, 
+import {
+  Search,
   Filter,
   Lightbulb,
   CheckCircle2,
@@ -67,7 +66,7 @@ export default function AdminSuggestions() {
                          suggestion.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || suggestion.status === statusFilter;
     const matchesCategory = categoryFilter === "all" || suggestion.category === categoryFilter;
-    
+
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
@@ -85,6 +84,11 @@ export default function AdminSuggestions() {
     }
   };
 
+  const getStatusColor = (status: string) => {
+    const statusOption = SUGGESTION_STATUS_OPTIONS.find(s => s.id === status);
+    return statusOption?.color || "";
+  };
+
   return (
     <>
       <style>{`
@@ -94,7 +98,7 @@ export default function AdminSuggestions() {
       `}</style>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-amber-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <AdminTopbar />
-        
+
         {/* Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-amber-600/10 dark:from-orange-400/5 dark:to-amber-400/5"></div>
@@ -113,7 +117,7 @@ export default function AdminSuggestions() {
             </div>
           </div>
         </div>
-        
+
         <div className="page-container pb-12">
 
           {/* Stats Cards */}
@@ -161,7 +165,7 @@ export default function AdminSuggestions() {
                   <div>
                     <p className="text-sm text-muted-foreground">Approval Rate</p>
                     <p className="text-2xl font-bold">
-                      {suggestions.length > 0 
+                      {suggestions.length > 0
                         ? Math.round((suggestions.filter(s => s.status === "approved" || s.status === "implemented").length / suggestions.length) * 100)
                         : 0}%
                     </p>
@@ -185,17 +189,6 @@ export default function AdminSuggestions() {
                     className="pl-10"
                   />
                 </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    {SUGGESTION_STATUS_OPTIONS.map(status => (
-                      <SelectItem key={status.id} value={status.id}>{status.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by category" />
@@ -204,6 +197,17 @@ export default function AdminSuggestions() {
                     <SelectItem value="all">All Categories</SelectItem>
                     {CATEGORIES.map(category => (
                       <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    {SUGGESTION_STATUS_OPTIONS.map(status => (
+                      <SelectItem key={status.id} value={status.id}>{status.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -245,7 +249,7 @@ export default function AdminSuggestions() {
                       {filteredSuggestions.map((suggestion) => {
                         const category = CATEGORIES.find(c => c.id === suggestion.category);
                         const statusInfo = SUGGESTION_STATUS_OPTIONS.find(s => s.id === suggestion.status);
-                        
+
                         return (
                           <TableRow key={suggestion.id} className="hover:bg-muted/50">
                             <TableCell>
@@ -257,7 +261,10 @@ export default function AdminSuggestions() {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant="secondary">{category?.name}</Badge>
+                              <div className="flex items-center space-x-2">
+                                <div className={`h-3 w-3 rounded-full ${category?.color || 'bg-gray-500'}`}></div>
+                                <span>{category?.name || suggestion.category}</span>
+                              </div>
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center space-x-2">
