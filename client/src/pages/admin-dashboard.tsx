@@ -91,8 +91,8 @@ export default function AdminDashboard() {
   const getAnalyticsData = () => {
     const months = timeRange === "12months" ? 12 : 6;
     const labels = [];
-    const complaintsData = [];
-    const suggestionsData = [];
+    const submissionsData = [];
+    const resolvedData = [];
 
     for (let i = months - 1; i >= 0; i--) {
       const date = subMonths(new Date(), i);
@@ -101,7 +101,7 @@ export default function AdminDashboard() {
       const monthStart = startOfMonth(date);
       const monthEnd = endOfMonth(date);
 
-      // Count complaints for this month
+      // Count total submissions (complaints + suggestions) for this month
       const monthComplaints = complaints.filter(c => {
         if (!c.createdAt) return false;
         try {
@@ -118,7 +118,6 @@ export default function AdminDashboard() {
         }
       }).length;
 
-      // Count suggestions for this month
       const monthSuggestions = suggestions.filter(s => {
         if (!s.createdAt) return false;
         try {
@@ -135,11 +134,28 @@ export default function AdminDashboard() {
         }
       }).length;
 
-      complaintsData.push(monthComplaints);
-      suggestionsData.push(monthSuggestions);
+      // Count resolved complaints for this month
+      const monthResolved = complaints.filter(c => {
+        if (!c.resolvedAt || c.status !== 'resolved') return false;
+        try {
+          let resolvedDate;
+          if (c.resolvedAt && typeof c.resolvedAt === 'object' && 'seconds' in c.resolvedAt) {
+            const timestamp = c.resolvedAt as any;
+            resolvedDate = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+          } else {
+            resolvedDate = new Date(c.resolvedAt);
+          }
+          return !isNaN(resolvedDate.getTime()) && resolvedDate >= monthStart && resolvedDate <= monthEnd;
+        } catch {
+          return false;
+        }
+      }).length;
+
+      submissionsData.push(monthComplaints + monthSuggestions);
+      resolvedData.push(monthResolved);
     }
 
-    return { labels, complaintsData, suggestionsData };
+    return { labels, submissionsData, resolvedData };
   };
 
   const analyticsData = getAnalyticsData();
@@ -464,10 +480,9 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <TrendsChart
-                  submissionsData={analyticsData.complaintsData}
-                  resolvedData={analyticsData.suggestionsData}
+                  submissionsData={analyticsData.submissionsData}
+                  resolvedData={analyticsData.resolvedData}
                   labels={analyticsData.labels}
-                  datasetLabels={{ submissions: "Complaints", resolved: "Suggestions" }}
                 />
               </CardContent>
             </Card>
