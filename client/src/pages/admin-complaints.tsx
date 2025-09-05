@@ -379,8 +379,8 @@ export default function AdminComplaints() {
                 {/* Description */}
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-base">Description</h4>
-                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
+                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 max-h-48 overflow-y-auto">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm break-words">
                       {viewComplaint.description}
                     </p>
                   </div>
