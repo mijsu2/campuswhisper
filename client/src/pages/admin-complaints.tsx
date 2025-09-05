@@ -188,16 +188,16 @@ export default function AdminComplaints() {
                 </div>
               ) : filteredComplaints.length > 0 ? (
                 <div className="overflow-x-auto max-h-96 overflow-y-auto border rounded-xl border-gray-200 dark:border-gray-700">
-                  <Table>
+                  <Table className="table-fixed w-full">
                     <TableHeader>
                       <TableRow className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 hover:bg-red-100 dark:hover:bg-red-900/30">
-                        <TableHead className="text-gray-600 dark:text-gray-300">ID</TableHead>
-                        <TableHead className="text-gray-600 dark:text-gray-300">Subject</TableHead>
-                        <TableHead className="text-gray-600 dark:text-gray-300">Category</TableHead>
-                        <TableHead className="text-gray-600 dark:text-gray-300">Priority</TableHead>
-                        <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
-                        <TableHead className="text-gray-600 dark:text-gray-300">Submitted</TableHead>
-                        <TableHead className="text-gray-600 dark:text-gray-300 text-right">Actions</TableHead>
+                        <TableHead className="text-gray-600 dark:text-gray-300 w-24">ID</TableHead>
+                        <TableHead className="text-gray-600 dark:text-gray-300 w-80">Subject</TableHead>
+                        <TableHead className="text-gray-600 dark:text-gray-300 w-32">Category</TableHead>
+                        <TableHead className="text-gray-600 dark:text-gray-300 w-24">Priority</TableHead>
+                        <TableHead className="text-gray-600 dark:text-gray-300 w-32">Status</TableHead>
+                        <TableHead className="text-gray-600 dark:text-gray-300 w-28">Submitted</TableHead>
+                        <TableHead className="text-gray-600 dark:text-gray-300 text-right w-32">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -207,22 +207,24 @@ export default function AdminComplaints() {
 
                         return (
                           <TableRow key={complaint.id} className="hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors duration-200">
-                            <TableCell className="font-mono text-sm text-gray-800 dark:text-gray-200">{complaint.referenceId}</TableCell>
-                            <TableCell>
-                              <div className="max-w-xs">
-                                <div className="font-medium text-gray-900 dark:text-gray-100 line-clamp-1">{complaint.subject}</div>
-                                <div className="text-sm text-muted-foreground line-clamp-2">
+                            <TableCell className="font-mono text-sm text-gray-800 dark:text-gray-200 w-24 truncate">{complaint.referenceId}</TableCell>
+                            <TableCell className="w-80">
+                              <div className="max-w-full">
+                                <div className="font-medium text-gray-900 dark:text-gray-100 truncate mb-1" title={complaint.subject}>
+                                  {complaint.subject}
+                                </div>
+                                <div className="text-sm text-muted-foreground line-clamp-2 break-words leading-tight" title={complaint.description}>
                                   {complaint.description}
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell>
-                              <Badge variant="secondary" className="bg-red-200 text-red-800 dark:bg-red-900 dark:text-red-200">{category?.name}</Badge>
+                            <TableCell className="w-32">
+                              <Badge variant="secondary" className="bg-red-200 text-red-800 dark:bg-red-900 dark:text-red-200 truncate">{category?.name}</Badge>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="w-24">
                               <Badge 
                                 variant={complaint.priority === "high" || complaint.priority === "urgent" ? "destructive" : "secondary"}
-                                className={complaint.priority === "high" || complaint.priority === "urgent" ? "bg-red-500/20 text-red-400" : "bg-blue-500/20 text-blue-400"}
+                                className={`truncate ${complaint.priority === "high" || complaint.priority === "urgent" ? "bg-red-500/20 text-red-400" : "bg-blue-500/20 text-blue-400"}`}
                               >
                                 {complaint.priority}
                               </Badge>
