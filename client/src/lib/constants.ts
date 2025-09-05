@@ -49,16 +49,6 @@ export const STATUS_OPTIONS = [
   { id: "resolved", name: "Resolved", color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800" },
 ];
 
-export const CATEGORIES = [
-  { id: "facilities", name: "Campus Facilities", color: "bg-blue-500" },
-  { id: "academic", name: "Academic Services", color: "bg-green-500" },
-  { id: "student-activities", name: "Student Activities", color: "bg-purple-500" },
-  { id: "technology", name: "Innovation Ideas", color: "bg-orange-500" },
-  { id: "services", name: "Campus Services", color: "bg-indigo-500" },
-  { id: "policy", name: "Policy Changes", color: "bg-red-500" },
-  { id: "other", name: "Other", color: "bg-gray-500" }
-];
-
 export const SUGGESTION_TYPES = [
   { id: "improvement", name: "Campus Improvement" },
   { id: "service", name: "New Service" },
