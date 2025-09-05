@@ -12,9 +12,20 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    if (!isAuthenticated || (requireAdmin && !isAdmin)) {
-      setLocation("/admin/login");
-    }
+    // Add a small delay to allow authentication state to settle
+    const checkAuth = () => {
+      if (!isAuthenticated || (requireAdmin && !isAdmin)) {
+        setLocation("/admin/login");
+      }
+    };
+
+    // Check immediately
+    checkAuth();
+    
+    // Also check after a short delay to handle race conditions
+    const timeoutId = setTimeout(checkAuth, 50);
+    
+    return () => clearTimeout(timeoutId);
   }, [isAuthenticated, isAdmin, requireAdmin, setLocation]);
 
   if (!isAuthenticated || (requireAdmin && !isAdmin)) {
@@ -22,4 +33,4 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   }
 
   return <>{children}</>;
-}
+}</export default>

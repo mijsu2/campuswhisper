@@ -29,7 +29,11 @@ export default function AdminLogin() {
           title: "Login Successful",
           description: "Welcome to the admin dashboard.",
         });
-        setLocation("/admin");
+        
+        // Add a small delay to ensure state is properly set
+        setTimeout(() => {
+          setLocation("/admin");
+        }, 100);
       } else {
         toast({
           title: "Login Failed",

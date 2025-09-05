@@ -42,10 +42,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (response.ok) {
         const data = await response.json();
+        
+        // Set state synchronously
+        const userData = data.user;
+        setUser(userData);
         setIsAuthenticated(true);
         setIsAdmin(true);
+        
+        // Store in localStorage
         localStorage.setItem("admin_authenticated", "true");
-        localStorage.setItem("admin_user", JSON.stringify(data.user));
+        localStorage.setItem("admin_user", JSON.stringify(userData));
+        
         return true;
       }
       return false;
