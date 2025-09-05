@@ -14,21 +14,21 @@ export const CATEGORIES = [
     description: "Campus buildings, equipment, and infrastructure"
   },
   {
-    id: "discipline",
+    id: "student-discipline",
     name: "Student Discipline",
     icon: "users",
     color: "bg-purple-500",
     description: "Student behavior and disciplinary issues"
   },
   {
-    id: "staff",
+    id: "teachers-staff",
     name: "Teachers & Staff",
     icon: "chalkboard-teacher",
     color: "bg-orange-500",
     description: "Faculty and staff related concerns"
   },
   {
-    id: "activities",
+    id: "clubs-activities",
     name: "Clubs & Activities",
     icon: "futbol",
     color: "bg-red-500",
