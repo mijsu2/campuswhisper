@@ -1,20 +1,21 @@
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp, getApps } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 // Firebase config for campuswhispers-9edfe project
 const firebaseConfig = {
-  apiKey: "AIzaSyAYQrEwrW2xOD4PyoQjDYwdCLIeLTn39IM",
-  authDomain: "campuswhispers-9edfe.firebaseapp.com",
-  projectId: "campuswhispers-9edfe",
-  storageBucket: "campuswhispers-9edfe.firebasestorage.app",
-  messagingSenderId: "1052127202505",
-  appId: "1:1052127202505:web:3bd1125e620f70acc0d118"
+  apiKey: "AIzaSyAerbM4QF9IiCnSnDZ1P9avBh_ACLslN8s",
+  authDomain: "reach-a3176.firebaseapp.com",
+  projectId: "reach-a3176",
+  storageBucket: "reach-a3176.firebasestorage.app",
+  messagingSenderId: "212707710810",
+  appId: "1:212707710810:web:e91d2500b12d888e238563",
 };
 
 // Initialize Firebase
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const app =
+  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 // Initialize Firestore
 export const db = getFirestore(app);
 
-console.log('Firebase initialized for campuswhispers-9edfe project');
+console.log("Firebase initialized for campuswhispers-9edfe project");
