@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { Suggestion } from "@shared/schema";
-import { CATEGORIES } from "@/lib/constants";
+import { CATEGORIES, SUGGESTION_TYPES } from "@/lib/constants";
 import { useState } from "react";
 import AdminTopbar from "@/components/layout/admin-topbar";
 
@@ -65,9 +65,9 @@ export default function AdminSuggestions() {
     const matchesSearch = suggestion.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          suggestion.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || suggestion.status === statusFilter;
-    const matchesCategory = categoryFilter === "all" || suggestion.category === categoryFilter;
+    const matchesType = categoryFilter === "all" || suggestion.type === categoryFilter;
 
-    return matchesSearch && matchesStatus && matchesCategory;
+    return matchesSearch && matchesStatus && matchesType;
   });
 
   const getStatusIcon = (status: string) => {
@@ -190,13 +190,15 @@ export default function AdminSuggestions() {
                   />
                 </div>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by category" />
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {CATEGORIES.map(category => (
-                      <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
+                    {SUGGESTION_TYPES.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -247,8 +249,7 @@ export default function AdminSuggestions() {
                     </TableHeader>
                     <TableBody>
                       {filteredSuggestions.map((suggestion) => {
-                        const category = CATEGORIES.find(c => c.id === suggestion.category);
-                        const statusInfo = SUGGESTION_STATUS_OPTIONS.find(s => s.id === suggestion.status);
+                        const type = SUGGESTION_TYPES.find(t => t.id === suggestion.type);
 
                         return (
                           <TableRow key={suggestion.id} className="hover:bg-muted/50">
@@ -261,16 +262,16 @@ export default function AdminSuggestions() {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <div className="flex items-center space-x-2">
-                                <div className={`h-3 w-3 rounded-full ${category?.color || 'bg-gray-500'}`}></div>
-                                <span>{category?.name || suggestion.category}</span>
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                                {type?.name || suggestion.type}
                               </div>
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center space-x-2">
                                 {getStatusIcon(suggestion.status)}
-                                <Badge className={statusInfo?.color}>
-                                  {statusInfo?.name}
+                                <Badge className={getStatusColor(suggestion.status)}>
+                                  {SUGGESTION_STATUS_OPTIONS.find(s => s.id === suggestion.status)?.name}
                                 </Badge>
                               </div>
                             </TableCell>
