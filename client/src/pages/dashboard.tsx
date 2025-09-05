@@ -74,13 +74,13 @@ export default function Dashboard() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <Link href="/submit">
-                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 sm:px-8 h-12 sm:h-auto">
+                <Button size="lg" className="w-full sm:w-auto sm:min-w-48 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 sm:px-10 py-3 sm:py-4 h-12 sm:h-14 text-base sm:text-lg font-semibold">
                   <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   Submit Feedback
                 </Button>
               </Link>
               <Link href="/track">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 hover:bg-white/50 dark:hover:bg-slate-800/50 shadow-lg hover:shadow-xl transition-all duration-300 px-6 sm:px-8 h-12 sm:h-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto sm:min-w-48 border-2 hover:bg-white/50 dark:hover:bg-slate-800/50 shadow-lg hover:shadow-xl transition-all duration-300 px-6 sm:px-10 py-3 sm:py-4 h-12 sm:h-14 text-base sm:text-lg font-semibold">
                   <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   Track Submissions
                 </Button>
