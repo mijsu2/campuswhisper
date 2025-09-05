@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { 
@@ -17,7 +17,11 @@ import {
   AlertTriangle,
   FileText,
   Shield,
-  CheckCircle2
+  CheckCircle2,
+  User,
+  Calendar,
+  Tag,
+  Flag
 } from "lucide-react";
 import { format } from "date-fns";
 import { Complaint } from "@shared/schema";
@@ -32,6 +36,7 @@ export default function AdminComplaints() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const [viewComplaint, setViewComplaint] = useState<Complaint | null>(null);
   const [resolution, setResolution] = useState("");
 
   const { data: complaints = [], isLoading } = useQuery<Complaint[]>({
@@ -255,7 +260,15 @@ export default function AdminComplaints() {
                               })()}
                             </TableCell>
                             <TableCell className="text-right">
-                              <div className="flex justify-end space-x-2">
+                              <div className="flex justify-end space-x-1">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => setViewComplaint(complaint)}
+                                  className="text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/40 h-8 w-8 p-0"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                </Button>
                                 {complaint.status === "pending" && (
                                   <Button
                                     size="sm"
@@ -264,7 +277,6 @@ export default function AdminComplaints() {
                                     disabled={updateStatusMutation.isPending}
                                     className="text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/40"
                                   >
-                                    <Eye className="h-3 w-3 mr-1" />
                                     Review
                                   </Button>
                                 )}
@@ -298,11 +310,162 @@ export default function AdminComplaints() {
           </Card>
         </div>
 
+        {/* Complaint Details Modal */}
+        <Dialog open={!!viewComplaint} onOpenChange={() => setViewComplaint(null)}>
+          <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-hidden border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <DialogHeader className="pb-4">
+              <DialogTitle className="text-foreground text-xl font-bold">Complaint Details</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                Full information about this complaint submission
+              </DialogDescription>
+            </DialogHeader>
+            {viewComplaint && (
+              <div className="space-y-6 overflow-y-auto pr-2">
+                {/* Header Info */}
+                <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 p-4 rounded-lg border border-red-100 dark:border-red-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{viewComplaint.subject}</h3>
+                    <Badge className={STATUS_OPTIONS.find(s => s.id === viewComplaint.status)?.color}>
+                      {STATUS_OPTIONS.find(s => s.id === viewComplaint.status)?.name}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">ID:</span>
+                      <span className="font-mono text-gray-700 dark:text-gray-300">{viewComplaint.referenceId}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Submitted:</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {(() => {
+                          if (!viewComplaint.createdAt) return "Unknown";
+                          try {
+                            let date;
+                            if (viewComplaint.createdAt && typeof viewComplaint.createdAt === 'object' && 'seconds' in viewComplaint.createdAt) {
+                              const timestamp = viewComplaint.createdAt as any;
+                              date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                            } else {
+                              date = new Date(viewComplaint.createdAt);
+                            }
+                            return !isNaN(date.getTime()) ? format(date, "PPP 'at' p") : "Unknown";
+                          } catch {
+                            return "Unknown";
+                          }
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Tag className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Category:</span>
+                      <Badge variant="secondary" className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                        {CATEGORIES.find(c => c.id === viewComplaint.category)?.name}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Flag className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Priority:</span>
+                      <Badge 
+                        variant={viewComplaint.priority === "high" || viewComplaint.priority === "urgent" ? "destructive" : "secondary"}
+                        className={viewComplaint.priority === "high" || viewComplaint.priority === "urgent" ? "bg-red-500/20 text-red-600 dark:text-red-400" : "bg-blue-500/20 text-blue-600 dark:text-blue-400"}
+                      >
+                        {viewComplaint.priority}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-base">Description</h4>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
+                      {viewComplaint.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Resolution (if exists) */}
+                {viewComplaint.resolution && (
+                  <div>
+                    <h4 className="font-semibold text-green-800 dark:text-green-200 mb-3 text-base">Resolution</h4>
+                    <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                      <p className="text-green-700 dark:text-green-300 leading-relaxed whitespace-pre-wrap text-sm">
+                        {viewComplaint.resolution}
+                      </p>
+                      {viewComplaint.resolvedAt && (
+                        <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
+                          <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                            Resolved on {(() => {
+                              try {
+                                let date;
+                                if (viewComplaint.resolvedAt && typeof viewComplaint.resolvedAt === 'object' && 'seconds' in viewComplaint.resolvedAt) {
+                                  const timestamp = viewComplaint.resolvedAt as any;
+                                  date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                                } else {
+                                  date = new Date(viewComplaint.resolvedAt);
+                                }
+                                return !isNaN(date.getTime()) ? format(date, "PPP 'at' p") : "Unknown";
+                              } catch {
+                                return "Unknown";
+                              }
+                            })()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setViewComplaint(null)}
+                    className="border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Close
+                  </Button>
+                  {viewComplaint.status === "pending" && (
+                    <Button
+                      onClick={() => {
+                        updateStatusMutation.mutate({ id: viewComplaint.id, status: "under_review" });
+                        setViewComplaint(null);
+                      }}
+                      disabled={updateStatusMutation.isPending}
+                      className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Start Review
+                    </Button>
+                  )}
+                  {viewComplaint.status === "under_review" && (
+                    <Button
+                      onClick={() => {
+                        setSelectedComplaint(viewComplaint);
+                        setViewComplaint(null);
+                      }}
+                      className="bg-green-600 hover:bg-green-700 focus:ring-green-500"
+                    >
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                      Mark as Resolved
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* Resolution Dialog */}
         <Dialog open={!!selectedComplaint} onOpenChange={() => setSelectedComplaint(null)}>
           <DialogContent className="sm:max-w-[425px] border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800">
             <DialogHeader>
               <DialogTitle className="text-foreground">Resolve Complaint</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                Add resolution details for this complaint
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
