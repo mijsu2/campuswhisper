@@ -106,11 +106,6 @@ export default function AdminComplaints() {
 
   return (
     <>
-      <style>{`
-        [data-testid="topbar"] {
-          display: none !important;
-        }
-      `}</style>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-orange-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <AdminTopbar />
 

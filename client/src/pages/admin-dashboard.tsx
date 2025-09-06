@@ -282,19 +282,6 @@ export default function AdminDashboard() {
         [data-testid="topbar"] {
           display: none !important;
         }
-        .page-container {
-          max-width: 1280px;
-          margin-left: auto;
-          margin-right: auto;
-          padding-left: 1rem;
-          padding-right: 1rem;
-        }
-        @media (min-width: 1024px) {
-          .page-container {
-            padding-left: 2rem;
-            padding-right: 2rem;
-          }
-        }
       `}</style>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-orange-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <AdminTopbar />
@@ -302,7 +289,7 @@ export default function AdminDashboard() {
         {/* Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 to-orange-600/10 dark:from-red-400/5 dark:to-orange-400/5"></div>
-          <div className="relative page-container py-8 sm:py-12">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
             <div className="text-center max-w-4xl mx-auto mb-6 sm:mb-8 px-4">
               <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-red-100 dark:bg-red-900/30 rounded-full text-red-700 dark:text-red-300 text-xs sm:text-sm font-medium mb-4 sm:mb-6 shadow-sm">
                 <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
@@ -330,7 +317,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="page-container pb-12">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12">
           {/* Main Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12 max-w-6xl mx-auto px-4">
             <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group">
